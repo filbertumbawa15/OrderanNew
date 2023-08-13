@@ -61,8 +61,17 @@ class _OtpVerificationState extends State<OtpVerification>
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: Colors.grey.shade50,
-      body: BlocProvider(
-        create: (context) => OtpBloc(),
+      body: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => OtpBloc(),
+          ),
+          BlocProvider(
+            create: (context) =>
+                OtpResendCubit(widget.email ?? 'nonong@gmail.com'),
+          ),
+        ],
+        // create: (context) => SubjectBloc(),
         child: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(

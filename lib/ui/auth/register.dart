@@ -19,7 +19,7 @@ class _RegisterState extends State<Register> {
   final TextEditingController _controllerPassword = TextEditingController();
   // bool? _isButtonDisabled;
   ValueNotifier<bool>? _isButtonDisabled;
-  bool? _passwordVisible;
+  ValueNotifier<bool>? _passwordVisible;
   final registerFormState = GlobalKey<FormState>();
   SimpleFontelicoProgressDialog? _dialog;
   final components = Tools();
@@ -28,8 +28,7 @@ class _RegisterState extends State<Register> {
   void initState() {
     _isButtonDisabled = ValueNotifier<bool>(true);
     super.initState();
-    _passwordVisible = true;
-    // _isButtonDisabled = true;
+    _passwordVisible = ValueNotifier<bool>(true);
   }
 
   @override
@@ -230,51 +229,56 @@ class _RegisterState extends State<Register> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 1),
-                              child: TextFormField(
-                                  controller: _controllerPassword,
-                                  decoration: InputDecoration(
-                                    hintStyle: const TextStyle(
-                                        color: Color(0xFF938D8D)),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 10.0),
-                                    hintText: "Masukkan Password",
-                                    filled: true,
-                                    fillColor: const Color(0xFFAEAEAE)
-                                        .withOpacity(0.65),
-                                    border: const OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(8.0)),
-                                      borderSide:
-                                          BorderSide(color: Color(0xFFAEAEAE)),
-                                    ),
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        // Based on passwordVisible state choose the icon
-                                        _passwordVisible!
-                                            ? Icons.visibility_off
-                                            : Icons.visibility,
-                                        color: const Color(0xFF938D8D),
-                                        size: 20.0,
+                              child: ValueListenableBuilder(
+                                valueListenable: _passwordVisible!,
+                                builder: (context, value, child) {
+                                  return TextFormField(
+                                      controller: _controllerPassword,
+                                      decoration: InputDecoration(
+                                        hintStyle: const TextStyle(
+                                            color: Color(0xFF938D8D)),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 10.0,
+                                                horizontal: 10.0),
+                                        hintText: "Masukkan Password",
+                                        filled: true,
+                                        fillColor: const Color(0xFFAEAEAE)
+                                            .withOpacity(0.65),
+                                        border: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(8.0)),
+                                          borderSide: BorderSide(
+                                              color: Color(0xFFAEAEAE)),
+                                        ),
+                                        suffixIcon: IconButton(
+                                          icon: Icon(
+                                            _passwordVisible!.value
+                                                ? Icons.visibility_off
+                                                : Icons.visibility,
+                                            color: const Color(0xFF938D8D),
+                                            size: 20.0,
+                                          ),
+                                          onPressed: () {
+                                            _passwordVisible!.value =
+                                                !_passwordVisible!.value;
+                                          },
+                                        ),
                                       ),
-                                      onPressed: () {
-                                        // Update the state i.e. toogle the state of passwordVisible variable
-                                        setState(() {
-                                          _passwordVisible = !_passwordVisible!;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  obscureText: _passwordVisible!,
-                                  onChanged: (val) {
-                                    if (val.isNotEmpty &&
-                                        _controllerName.text.isNotEmpty &&
-                                        _controllerEmail.text.isNotEmpty &&
-                                        _controllerPassword.text.isNotEmpty) {
-                                      _isButtonDisabled!.value = false;
-                                    } else {
-                                      _isButtonDisabled!.value = true;
-                                    }
-                                  }),
+                                      obscureText: _passwordVisible!.value,
+                                      onChanged: (val) {
+                                        if (val.isNotEmpty &&
+                                            _controllerName.text.isNotEmpty &&
+                                            _controllerEmail.text.isNotEmpty &&
+                                            _controllerPassword
+                                                .text.isNotEmpty) {
+                                          _isButtonDisabled!.value = false;
+                                        } else {
+                                          _isButtonDisabled!.value = true;
+                                        }
+                                      });
+                                },
+                              ),
                             ),
                           ],
                         ),
@@ -295,11 +299,11 @@ class _RegisterState extends State<Register> {
                                 if (state is RegisterUserLoading) {
                                   Future.delayed(const Duration(seconds: 0),
                                       () {
-                                    _showDialog(
-                                        context,
-                                        SimpleFontelicoProgressDialogType
-                                            .normal,
-                                        'Normal');
+                                    components.showDia(
+                                      context,
+                                      SimpleFontelicoProgressDialogType.normal,
+                                      'Normal',
+                                    );
                                   });
                                 } else if (state is RegisterUserError) {
                                   _dialog!.hide();
@@ -388,35 +392,5 @@ class _RegisterState extends State<Register> {
         ),
       ),
     );
-  }
-
-  void _showDialog(BuildContext context, SimpleFontelicoProgressDialogType type,
-      String text) async {
-    _dialog ??= SimpleFontelicoProgressDialog(
-        context: context, barrierDimisable: false);
-    // _dialog == null
-    //     ? _dialog = SimpleFontelicoProgressDialog(
-    //         context: context, barrierDimisable: false)
-    //     : null;
-    if (type == SimpleFontelicoProgressDialogType.custom) {
-      _dialog!.show(
-          message: text,
-          type: type,
-          width: 150.0,
-          height: 75.0,
-          loadingIndicator: const Text(
-            'C',
-            style: TextStyle(fontSize: 24.0),
-          ));
-    } else {
-      _dialog!.show(
-          message: text,
-          type: type,
-          horizontal: true,
-          width: 150.0,
-          height: 75.0,
-          hideText: true,
-          indicatorColor: Colors.blue);
-    }
   }
 }
