@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:tasorderan/bloc/user/register/register_user_bloc.dart';
 import 'package:tasorderan/components/components.dart';
+import 'package:tasorderan/ui/auth/otp.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -21,7 +20,6 @@ class _RegisterState extends State<Register> {
   ValueNotifier<bool>? _isButtonDisabled;
   ValueNotifier<bool>? _passwordVisible;
   final registerFormState = GlobalKey<FormState>();
-  SimpleFontelicoProgressDialog? _dialog;
   final components = Tools();
 
   @override
@@ -290,9 +288,13 @@ class _RegisterState extends State<Register> {
                                 RegisterUserState>(
                               listener: (context, state) async {
                                 if (state is RegisterUserSuccess) {
-                                  _dialog!.hide();
-                                  await Navigator.pushReplacementNamed(
-                                      context, '/otp_verification');
+                                  components.dia!.hide();
+                                  await Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => OtpVerification(
+                                                email: _controllerEmail.text,
+                                              )));
                                 }
                               },
                               builder: (context, state) {
@@ -306,7 +308,7 @@ class _RegisterState extends State<Register> {
                                     );
                                   });
                                 } else if (state is RegisterUserError) {
-                                  _dialog!.hide();
+                                  components.dia!.hide();
                                   final value = state.response.errors!.values
                                       .elementAt(0)[0];
                                   Future.delayed(const Duration(seconds: 0),

@@ -23,3 +23,24 @@ class RegisterUserParam {
     };
   }
 }
+
+class OtpResendParam {
+  String? email;
+
+  OtpResendParam(this.email);
+
+  Map<String, dynamic> toJson() {
+    return {"email": email};
+  }
+}
+
+class CheckOtpParam {
+  String? otp;
+  String? identifier;
+
+  CheckOtpParam(this.otp, this.identifier);
+
+  Map<String, dynamic> toJson() {
+    return {"otp": otp, "identifier": identifier};
+  }
+}

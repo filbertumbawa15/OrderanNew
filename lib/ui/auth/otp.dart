@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_dialogs/widgets/buttons/icon_button.dart';
 import 'package:otp_text_field/otp_text_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:tasorderan/bloc/user/otp/otp_bloc.dart';
-import 'package:tasorderan/bloc/user/otp_resend/otp_resend_cubit.dart';
+import 'package:tasorderan/components/components.dart';
 
 class OtpVerification extends StatefulWidget {
   final String? identifier;
@@ -28,6 +29,7 @@ class _OtpVerificationState extends State<OtpVerification>
     with TickerProviderStateMixin {
   AnimationController? _controller;
   int levelClock = 5;
+  final components = Tools();
 
   @override
   void initState() {
@@ -61,17 +63,8 @@ class _OtpVerificationState extends State<OtpVerification>
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: Colors.grey.shade50,
-      body: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => OtpBloc(),
-          ),
-          BlocProvider(
-            create: (context) =>
-                OtpResendCubit(widget.email ?? 'nonong@gmail.com'),
-          ),
-        ],
-        // create: (context) => SubjectBloc(),
+      body: BlocProvider(
+        create: (context) => OtpBloc(),
         child: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
@@ -109,35 +102,75 @@ class _OtpVerificationState extends State<OtpVerification>
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      OTPTextField(
-                        length: 4,
-                        width: MediaQuery.of(context).size.width,
-                        textFieldAlignment: MainAxisAlignment.spaceAround,
-                        fieldWidth: 55,
-                        fieldStyle: FieldStyle.box,
-                        outlineBorderRadius: 15,
-                        style: const TextStyle(fontSize: 17),
-                        onChanged: (pin) {
-                          // print("Changed: " + pin);
+                      BlocConsumer<OtpBloc, OtpState>(
+                        listener: (context, state) {
+                          if (state is OtpSuccess) {
+                            components.dia!.hide();
+                            Future.delayed(const Duration(seconds: 0), () {
+                              components.alertBerhasilPesan(
+                                context,
+                                "Akun anda berhasil ter-verifikasi, silahkan login untuk melakukan pemesanan.",
+                                "Register Berhasil",
+                                "assets/imgs/updated-transaction.json",
+                                IconsButton(
+                                  onPressed: () async {
+                                    await Navigator.pushReplacementNamed(
+                                        context, "/login");
+                                  },
+                                  text: 'Ok',
+                                  iconData: Icons.done,
+                                  color: Colors.blue,
+                                  textStyle:
+                                      const TextStyle(color: Colors.white),
+                                  iconColor: Colors.white,
+                                ),
+                              );
+                            });
+                            // Navigator.push(context, route)
+                          }
                         },
-                        onCompleted: (otp) {
-                          // _showDialog(
-                          //     context,
-                          //     SimpleFontelicoProgressDialogType.normal,
-                          //     'Normal');
-                          // print('otp id: ' + widget.identifier);
-                          // verifyOtp(
-                          //   context,
-                          //   otp,
-                          //   widget.identifier,
-                          //   widget.sendOTPVia,
-                          //   OtpVerification._dialog,
-                          // );
+                        builder: (context, state) {
+                          if (state is OtpLoading) {
+                            Future.delayed(const Duration(seconds: 0), () {
+                              components.showDia(
+                                  context,
+                                  SimpleFontelicoProgressDialogType.normal,
+                                  'Normal');
+                            });
+                          } else if (state is OtpError) {
+                            components.dia!.hide();
+                            Future.delayed(const Duration(seconds: 0), () {
+                              components.alert(context, state.message);
+                            });
+                          }
+                          return OTPTextField(
+                            length: 4,
+                            width: MediaQuery.of(context).size.width,
+                            textFieldAlignment: MainAxisAlignment.spaceAround,
+                            fieldWidth: 55,
+                            fieldStyle: FieldStyle.box,
+                            outlineBorderRadius: 15,
+                            style: const TextStyle(fontSize: 17),
+                            onChanged: (pin) {
+                              // print("Changed: " + pin);
+                            },
+                            onCompleted: (otp) {
+                              context.read<OtpBloc>().add(CheckOtpEvent(
+                                  otp: otp, identifier: widget.email!));
+                            },
+                          );
                         },
                       ),
-                      BlocConsumer<OtpResendCubit, OtpResendState>(
-                        listener: (context, state) {},
+                      BlocBuilder<OtpBloc, OtpState>(
                         builder: (context, state) {
+                          if (state is OtpResendLoading) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (state is OtpResendError) {
+                            // components.dia!.hide();
+                            return Center(child: Text(state.message));
+                          }
                           return Visibility(
                             visible: OtpVerification.show_resend,
                             child: Padding(
@@ -161,10 +194,8 @@ class _OtpVerificationState extends State<OtpVerification>
                                       ),
                                     ),
                                     onTap: () async {
-                                      // _showDialog(
-                                      //     context,
-                                      //     SimpleFontelicoProgressDialogType.normal,
-                                      //     'Normal');
+                                      context.read<OtpBloc>().add(
+                                          OtpResendEvent(email: widget.email!));
                                       // await resend(
                                       //   context,
                                       //   widget.email,

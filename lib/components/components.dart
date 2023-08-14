@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+import 'package:material_dialogs/dialogs.dart';
+import 'package:material_dialogs/widgets/buttons/icon_button.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
@@ -6,7 +9,7 @@ import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 class Tools extends StatelessWidget {
   Tools({Key? key});
 
-  SimpleFontelicoProgressDialog? _dialog;
+  SimpleFontelicoProgressDialog? dia;
 
   Widget? alert(BuildContext context, String message) {
     QuickAlert.show(
@@ -19,10 +22,10 @@ class Tools extends StatelessWidget {
 
   void showDia(BuildContext context, SimpleFontelicoProgressDialogType type,
       String text) async {
-    _dialog ??= SimpleFontelicoProgressDialog(
+    dia ??= SimpleFontelicoProgressDialog(
         context: context, barrierDimisable: false);
     if (type == SimpleFontelicoProgressDialogType.custom) {
-      _dialog!.show(
+      dia!.show(
           message: text,
           type: type,
           width: 150.0,
@@ -32,7 +35,7 @@ class Tools extends StatelessWidget {
             style: TextStyle(fontSize: 24.0),
           ));
     } else {
-      _dialog!.show(
+      dia!.show(
           message: text,
           type: type,
           horizontal: true,
@@ -41,6 +44,20 @@ class Tools extends StatelessWidget {
           hideText: true,
           indicatorColor: Colors.blue);
     }
+  }
+
+  Future<void> alertBerhasilPesan(BuildContext context, String keterangan,
+      String title, String path, Widget action) {
+    return Dialogs.materialDialog(
+        color: Colors.white,
+        msg: keterangan,
+        title: title,
+        lottieBuilder: Lottie.asset(
+          path,
+          fit: BoxFit.contain,
+        ),
+        context: context,
+        actions: [action]);
   }
 
   @override

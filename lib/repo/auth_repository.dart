@@ -26,12 +26,22 @@ class AuthRepository extends ApiClient {
     }
   }
 
-  Future<void> resend(String email) async {
+  Future<void> resend(OtpResendParam params) async {
     try {
-      print(jsonEncode(email));
-      final response = await dio.post('/api-orderemkl/public/api/auth/resend',
-          data: jsonEncode(email));
+      final response = await dio.post('orderemkl-api/public/api/auth/resend',
+          data: {'data': jsonEncode(params.toJson())});
       debugPrint("Result Response: ${response.data}");
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<void> verifyOtp(CheckOtpParam param) async {
+    try {
+      final response = await dio.post(
+          'orderemkl-api/public/api/auth/verify_otp',
+          data: jsonEncode(param.toJson()));
+      debugPrint("Result Response Verify OTP: ${response.data}");
     } catch (e) {
       throw Exception(e.toString());
     }
