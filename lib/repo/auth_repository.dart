@@ -8,7 +8,7 @@ import 'package:tasorderan/params/register_user_params.dart';
 import 'package:tasorderan/response/user_response.dart';
 
 class AuthRepository extends ApiClient {
-  final sessionManager = SesssionManager();
+  final sessionManager = SessionManager();
 
   Future<UserRegisterResponse> registerUser(RegisterUserParam param) async {
     try {
@@ -42,8 +42,12 @@ class AuthRepository extends ApiClient {
           'orderemkl-api/public/api/auth/verify_otp',
           data: jsonEncode(param.toJson()));
       debugPrint("Result Response Verify OTP: ${response.data}");
-    } catch (e) {
-      throw Exception(e.toString());
+    } on DioError catch (e) {
+      if (e.response!.statusCode == 401) {
+        throw Exception("Verifikasi Gagal, Kode Salah");
+      }
+      debugPrint("Error Response: ${e.toString()}");
+      throw Exception("Verifikasi Gagal");
     }
   }
 }
