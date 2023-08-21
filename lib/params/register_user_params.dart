@@ -41,6 +41,22 @@ class CheckOtpParam {
   CheckOtpParam(this.otp, this.identifier);
 
   Map<String, dynamic> toJson() {
-    return {"otp": otp, "identifier": identifier};
+    return {
+      "otp": otp,
+      "identifier": identifier,
+    };
+  }
+}
+
+class LoginParam {
+  String? email;
+  String? password;
+
+  LoginParam(this.email, this.password);
+  Map<String, dynamic> toJson() {
+    return {
+      "email": email,
+      "password": password,
+    };
   }
 }

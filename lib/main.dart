@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:tasorderan/ui/auth/login.dart';
 import 'package:tasorderan/ui/auth/otp.dart';
 import 'package:tasorderan/ui/auth/register.dart';
+import 'package:tasorderan/ui/home.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -20,13 +23,15 @@ class MyHttpOverrides extends HttpOverrides {
 // }
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   // await MaskForCameraView.initialize();
   // await Firebase.initializeApp();
   // await FirebaseMessaging.instance.getInitialMessage();
   // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   // NotificationService().init();
   // HttpOverrides.global = MyHttpOverrides();
+  await Hive.initFlutter();
+  await Hive.openBox('session');
   runApp(const MyApp());
 }
 
@@ -121,7 +126,7 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/login',
         routes: <String, WidgetBuilder>{
-          // '/home': (BuildContext context) => new Home(),
+          '/home': (BuildContext context) => const Home(),
           // '/harga': (BuildContext context) => new Harga(),
           // "/onboarding": (BuildContext context) => new Onboarding(),
           // "/profiles": (BuildContext context) => new Profiles(),

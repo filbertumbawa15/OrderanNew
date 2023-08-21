@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
+import 'package:tasorderan/bloc/user/login/login_bloc.dart';
+import 'package:tasorderan/components/components.dart';
 
 class Login extends StatefulWidget {
   SimpleFontelicoProgressDialog? _dialog;
@@ -10,18 +13,19 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool loggedIn = false;
-  bool? _passwordVisible;
-  bool? _isButtonDisabled;
+  // bool loggedIn = false;
+  ValueNotifier<bool>? _passwordVisible;
+  ValueNotifier<bool>? _isButtonDisabled;
+  final loginFormState = GlobalKey<FormState>();
+  final components = Tools();
 
   // get prefs => null;
 
   @override
   void initState() {
     super.initState();
-    // _setPrefs();
-    _passwordVisible = true;
-    _isButtonDisabled = true;
+    _passwordVisible = ValueNotifier<bool>(true);
+    _isButtonDisabled = ValueNotifier<bool>(true);
   }
 
   // _setPrefs() async {
@@ -36,241 +40,276 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/imgs/bg-login.jpg'),
-            fit: BoxFit.cover,
+      body: BlocProvider(
+        create: (context) => LoginBloc(),
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/imgs/bg-login.jpg'),
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      child: Image.asset(
-                        "assets/imgs/taslogo.png",
-                        fit: BoxFit.contain,
-                        width: 100,
-                      ),
-                    ),
-                    const Text(
-                      'Selamat Datang',
-                      style: TextStyle(
-                          fontSize: 28.0, fontWeight: FontWeight.w600),
-                    ),
-                    const Text(
-                      'Masuk ke Akun Anda',
-                      style: TextStyle(
-                          fontSize: 18.0, fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.all(8.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Form(
+                    key: loginFormState,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          "Email",
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
+                        SizedBox(
+                          child: Image.asset(
+                            "assets/imgs/taslogo.png",
+                            fit: BoxFit.contain,
+                            width: 100,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 1),
-                          child: TextFormField(
-                              controller: _emailController,
-                              decoration: InputDecoration(
-                                hintStyle:
-                                    const TextStyle(color: Color(0xFF938D8D)),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 10.0, horizontal: 10.0),
-                                hintText: "Masukkan Email",
-                                filled: true,
-                                fillColor:
-                                    const Color(0xFFAEAEAE).withOpacity(0.65),
-                                border: const OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8.0)),
-                                  borderSide:
-                                      BorderSide(color: Color(0xFFAEAEAE)),
-                                ),
+                        const Text(
+                          'Selamat Datang',
+                          style: TextStyle(
+                              fontSize: 28.0, fontWeight: FontWeight.w600),
+                        ),
+                        const Text(
+                          'Masuk ke Akun Anda',
+                          style: TextStyle(
+                              fontSize: 18.0, fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Email",
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
                               ),
-                              onChanged: (val) {
-                                if (val.isNotEmpty &&
-                                    _passwordController.text.isNotEmpty) {
-                                  setState(() {
-                                    _isButtonDisabled = false;
-                                  });
-                                } else {
-                                  setState(() {
-                                    _isButtonDisabled = true;
-                                  });
-                                }
-                              }),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Password",
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 1),
-                          child: TextFormField(
-                              controller: _passwordController,
-                              decoration: InputDecoration(
-                                hintStyle:
-                                    const TextStyle(color: Color(0xFF938D8D)),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 10.0, horizontal: 10.0),
-                                hintText: 'Masukkan Password',
-                                filled: true,
-                                fillColor:
-                                    const Color(0xFFAEAEAE).withOpacity(0.65),
-                                border: const OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8.0)),
-                                  borderSide:
-                                      BorderSide(color: Color(0xFFAEAEAE)),
-                                ),
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    // Based on passwordVisible state choose the icon
-                                    _passwordVisible!
-                                        ? Icons.visibility_off
-                                        : Icons.visibility,
-                                    color: const Color(0xFF938D8D),
-                                    size: 20.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 1),
+                              child: TextFormField(
+                                  controller: _emailController,
+                                  decoration: InputDecoration(
+                                    hintStyle: const TextStyle(
+                                        color: Color(0xFF938D8D)),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 10.0),
+                                    hintText: "Masukkan Email",
+                                    filled: true,
+                                    fillColor: const Color(0xFFAEAEAE)
+                                        .withOpacity(0.65),
+                                    border: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(8.0)),
+                                      borderSide:
+                                          BorderSide(color: Color(0xFFAEAEAE)),
+                                    ),
                                   ),
-                                  onPressed: () {
-                                    // Update the state i.e. toogle the state of passwordVisible variable
-                                    setState(() {
-                                      _passwordVisible = !_passwordVisible!;
-                                    });
+                                  onChanged: (val) {
+                                    if (val.isNotEmpty &&
+                                        _passwordController.text.isNotEmpty) {
+                                      _isButtonDisabled!.value = false;
+                                    } else {
+                                      _isButtonDisabled!.value = true;
+                                    }
+                                  }),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Password",
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 1),
+                              child: ValueListenableBuilder(
+                                valueListenable: _passwordVisible!,
+                                builder: (context, value, child) {
+                                  return TextFormField(
+                                      controller: _passwordController,
+                                      decoration: InputDecoration(
+                                        hintStyle: const TextStyle(
+                                            color: Color(0xFF938D8D)),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 10.0,
+                                                horizontal: 10.0),
+                                        hintText: 'Masukkan Password',
+                                        filled: true,
+                                        fillColor: const Color(0xFFAEAEAE)
+                                            .withOpacity(0.65),
+                                        border: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(8.0)),
+                                          borderSide: BorderSide(
+                                              color: Color(0xFFAEAEAE)),
+                                        ),
+                                        suffixIcon: IconButton(
+                                          icon: Icon(
+                                            // Based on passwordVisible state choose the icon
+                                            _passwordVisible!.value
+                                                ? Icons.visibility_off
+                                                : Icons.visibility,
+                                            color: const Color(0xFF938D8D),
+                                            size: 20.0,
+                                          ),
+                                          onPressed: () {
+                                            _passwordVisible!.value =
+                                                !_passwordVisible!.value;
+                                          },
+                                        ),
+                                      ),
+                                      obscureText: _passwordVisible!.value,
+                                      onChanged: (val) {
+                                        if (val.isNotEmpty &&
+                                            _emailController.text.isNotEmpty) {
+                                          _isButtonDisabled!.value = false;
+                                        } else {
+                                          _isButtonDisabled!.value = true;
+                                        }
+                                      });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 15),
+                            child: ValueListenableBuilder(
+                              valueListenable: _isButtonDisabled!,
+                              builder: (context, value, child) {
+                                return BlocConsumer<LoginBloc, LoginState>(
+                                  listener: (context, state) async {
+                                    if (state is LoginSuccess) {
+                                      await Navigator.pushReplacementNamed(
+                                          context, '/home');
+                                    }
                                   },
+                                  builder: (context, state) {
+                                    if (state is LoginLoading) {
+                                      Future.delayed(const Duration(seconds: 0),
+                                          () {
+                                        components.showDia(
+                                          context,
+                                          SimpleFontelicoProgressDialogType
+                                              .normal,
+                                          'Normal',
+                                        );
+                                      });
+                                    } else if (state is LoginError) {
+                                      components.dia!.hide();
+                                      final value = state
+                                          .response.errors!.values
+                                          .elementAt(0)[0];
+                                      Future.delayed(const Duration(seconds: 0),
+                                          () {
+                                        components.alert(context, value);
+                                      });
+                                    }
+                                    return ValueListenableBuilder(
+                                      valueListenable: _isButtonDisabled!,
+                                      builder: (context, value, child) {
+                                        return ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color(0xFF5599E9),
+                                          ),
+                                          onPressed: _isButtonDisabled!.value
+                                              ? null
+                                              : () async {
+                                                  context
+                                                      .read<LoginBloc>()
+                                                      .add(LoginUserEvent(
+                                                        email: _emailController
+                                                            .text
+                                                            .toString(),
+                                                        password:
+                                                            _passwordController
+                                                                .text
+                                                                .toString(),
+                                                      ));
+                                                },
+                                          child: const Text(
+                                            'Login',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15.0,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Belum punya akun? ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              obscureText: _passwordVisible!,
-                              onChanged: (val) {
-                                if (val.isNotEmpty &&
-                                    _emailController.text.isNotEmpty) {
-                                  setState(() {
-                                    _isButtonDisabled = false;
-                                  });
-                                } else {
-                                  setState(() {
-                                    _isButtonDisabled = true;
-                                  });
-                                }
-                              }),
+                              GestureDetector(
+                                child: const Text(
+                                  "Register",
+                                  style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    color: Color(0xFF5599E9),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.pushReplacementNamed(
+                                      context, '/register');
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                child: const Text(
+                                  "Lupa Password",
+                                  style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    color: Color(0xFF5599E9),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                onTap: () {
+                                  // Navigator.of(context).pushReplacement(
+                                  //     globals.createRoute(ForgotPassword()));
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 15),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF5599E9),
-                          ),
-                          onPressed: _isButtonDisabled!
-                              ? null
-                              : () async {
-                                  // _showDialog(
-                                  //     context,
-                                  //     SimpleFontelicoProgressDialogType.normal,
-                                  //     'Normal');
-                                  // await authUser(
-                                  //   context,
-                                  //   _emailController.text,
-                                  //   _passwordController.text,
-                                  //   widget._dialog,
-                                  // );
-
-                                  // await _setPrefs();
-
-                                  if (loggedIn) {
-                                    Navigator.of(context)
-                                        .pushNamedAndRemoveUntil('/onboarding',
-                                            (Route<dynamic> route) => false);
-                                  } else {
-                                    // print('user logged out');
-                                  }
-                                },
-                          child: const Text(
-                            'Login',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15.0,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Belum punya akun? ",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          GestureDetector(
-                            child: const Text(
-                              "Register",
-                              style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                color: Color(0xFF5599E9),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            onTap: () {
-                              Navigator.pushReplacementNamed(
-                                  context, '/register');
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            child: const Text(
-                              "Lupa Password",
-                              style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                color: Color(0xFF5599E9),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            onTap: () {
-                              // Navigator.of(context).pushReplacement(
-                              //     globals.createRoute(ForgotPassword()));
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),

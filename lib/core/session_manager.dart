@@ -8,6 +8,7 @@ class SessionManager {
     String user,
     String telp,
     int id,
+    String verification,
     String email,
     String password,
     String token,
@@ -16,6 +17,7 @@ class SessionManager {
     box.put(AppKey.userKey, user);
     box.put(AppKey.telpKey, telp);
     box.put(AppKey.idKey, id);
+    box.put(AppKey.verificationidKey, verification);
     box.put(AppKey.emailKey, email);
     box.put(AppKey.passwordKey, password);
     box.put(AppKey.tokenKey, token);
@@ -25,6 +27,7 @@ class SessionManager {
   String? getActiveUser() => box.get(AppKey.userKey);
   String? getActiveTelp() => box.get(AppKey.telpKey);
   int? getActiveId() => box.get(AppKey.idKey);
+  String? getActiveVerification() => box.get(AppKey.verificationidKey);
   String? getActiveEmail() => box.get(AppKey.emailKey);
   String? getActivePassword() => box.get(AppKey.passwordKey);
   String? getActiveToken() => box.get(AppKey.tokenKey);
@@ -34,6 +37,7 @@ class SessionManager {
     String? activeUser = getActiveUser();
     String? activeTelp = getActiveTelp();
     int? activeId = getActiveId();
+    String? activeVerification = getActiveVerification();
     String? activeEmail = getActiveEmail();
     String? activePasword = getActivePassword();
     String? activeToken = getActiveToken();
@@ -41,6 +45,7 @@ class SessionManager {
         activeUser != null &&
         activeTelp != null &&
         activeId != null &&
+        activeVerification != null &&
         activeEmail != null &&
         activePasword != null &&
         activeToken != null;

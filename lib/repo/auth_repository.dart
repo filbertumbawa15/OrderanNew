@@ -50,4 +50,20 @@ class AuthRepository extends ApiClient {
       throw Exception("Verifikasi Gagal");
     }
   }
+
+  Future<UserRegisterResponse> login(LoginParam param) async {
+    try {
+      final response = await dio.post('orderemkl-api/public/api/auth/login',
+          data: jsonEncode(param.toJson()));
+      // debugPrint("Response Status Code : ${response.statusCode}");
+      return UserRegisterResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      if (e.response!.statusCode == 500) {
+        throw UserRegisterResponse.fromJson(e.response!.data);
+      } else if (e.response!.statusCode == 422) {
+        throw UserRegisterResponse.fromJson(e.response!.data);
+      }
+      throw UserRegisterResponse.fromJson(e.response!.data);
+    }
+  }
 }

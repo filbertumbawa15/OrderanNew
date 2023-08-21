@@ -30,7 +30,7 @@ class RegisterUserBloc extends Bloc<RegisterUserEvent, RegisterUserState> {
     try {
       response = await authRepository.registerUser(params);
       emit(RegisterUserSuccess(response: response));
-    } on UserRegisterResponse catch (_, e) {
+    } on UserRegisterResponse catch (_) {
       emit(RegisterUserError(response: _));
     }
   }
