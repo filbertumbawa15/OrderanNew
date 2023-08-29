@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "tasorderan" "\0"
+            VALUE "FileDescription", "TAS Orderan EMKL" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "tasorderan" "\0"
+            VALUE "InternalName", "TAS Orderan EMKL" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
             VALUE "OriginalFilename", "tasorderan.exe" "\0"
-            VALUE "ProductName", "tasorderan" "\0"
+            VALUE "ProductName", "TAS Orderan EMKL" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
