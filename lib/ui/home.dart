@@ -948,10 +948,10 @@ class _ProfilesState extends State<Profiles>
               color: Color(
             0xFFF1F1EF,
           )),
-          child: const Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   CircleAvatar(
@@ -964,20 +964,20 @@ class _ProfilesState extends State<Profiles>
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Text(
-                'Nama',
-                style: TextStyle(
+                '${sessionManager.getActiveName()}',
+                style: const TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF313131),
                 ),
               ),
               Text(
-                'Email',
-                style: TextStyle(
+                '${sessionManager.getActiveEmail()}',
+                style: const TextStyle(
                   color: Color(0xFFA1A19C),
                   fontSize: 19,
                   fontWeight: FontWeight.bold,
@@ -993,9 +993,9 @@ class _ProfilesState extends State<Profiles>
           labelColor: Color(0xFF5599E9),
           splashFactory: NoSplash.splashFactory,
           unselectedLabelColor: Color(0xFF313131),
-          tabs: [
+          tabs: const [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(8.0),
               child: Text(
                 "Data User",
                 style: TextStyle(
@@ -1081,7 +1081,7 @@ class _ProfilesState extends State<Profiles>
       child: Column(
         children: <Widget>[
           ListTile(
-            title: Text(
+            title: const Text(
               'Name',
               style: TextStyle(
                 color: Color(0xFF777777),
@@ -1090,7 +1090,31 @@ class _ProfilesState extends State<Profiles>
               ),
             ),
             subtitle: Text(
-              'Name',
+              '${sessionManager.getActiveName()}',
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF313131),
+              ),
+            ),
+          ),
+          const Divider(
+            color: Color(0xFF999999),
+            thickness: 2.0,
+            indent: 15.0,
+            endIndent: 15.0,
+          ),
+          const ListTile(
+            title: Text(
+              'Tanggal Lahir',
+              style: TextStyle(
+                color: Color(0xFF777777),
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            subtitle: Text(
+              "1 Januari 1990",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -1098,41 +1122,14 @@ class _ProfilesState extends State<Profiles>
               ),
             ),
           ),
-          Divider(
-            color: Color(0xFF999999),
-            thickness: 2.0,
-            indent: 15.0,
-            endIndent: 15.0,
-          ),
-          // ListTile(
-          //   title: Text(
-          //     'Tanggal Lahir',
-          //     style: TextStyle(
-          //       color: Color(0xFF777777),
-          //       fontSize: 14,
-          //       fontWeight: FontWeight.bold,
-          //     ),
-          //   ),
-          //   subtitle: Text(
-          //     globals.tglLahir == null
-          //         ? "1 Januari 1990"
-          //         : DateFormat("dd-MM-yyyy")
-          //             .format(DateFormat("yyyy-MM-dd").parse(globals.tglLahir)),
-          //     style: TextStyle(
-          //       fontSize: 20,
-          //       fontWeight: FontWeight.bold,
-          //       color: Color(0xFF313131),
-          //     ),
-          //   ),
-          // ),
-          Divider(
+          const Divider(
             color: Color(0xFF999999),
             thickness: 2.0,
             indent: 15.0,
             endIndent: 15.0,
           ),
           ListTile(
-            title: Text(
+            title: const Text(
               'No. Telp',
               style: TextStyle(
                 color: Color(0xFF777777),
@@ -1141,21 +1138,21 @@ class _ProfilesState extends State<Profiles>
               ),
             ),
             subtitle: Text(
-              'Notelp',
-              style: TextStyle(
+              '${sessionManager.getActiveTelp()}',
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF313131),
               ),
             ),
           ),
-          Divider(
+          const Divider(
             color: Color(0xFF999999),
             thickness: 2.0,
             indent: 15.0,
             endIndent: 15.0,
           ),
-          SizedBox(
+          const SizedBox(
             height: 15.0,
           ),
           // if (globals.verificationStatus == "0") ...[
