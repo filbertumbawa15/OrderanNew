@@ -9,6 +9,7 @@ import 'package:tasorderan/core/session_manager.dart';
 import 'package:tasorderan/ui/auth/login.dart';
 import 'package:tasorderan/ui/auth/otp.dart';
 import 'package:tasorderan/ui/auth/register.dart';
+import 'package:tasorderan/ui/cekongkir/ongkir.dart';
 import 'package:tasorderan/ui/home.dart';
 
 class MyHttpOverrides extends HttpOverrides {
@@ -118,55 +119,44 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AppSettingBloc()..add(SettingAppEvent()),
-      child: BlocBuilder<AppSettingBloc, AppSettingState>(
-        builder: (context, state) {
-          Widget _home = Login();
-          if (state is AppSettingAuthenticated) {
-            _home = const Home();
-          }
-          return MaterialApp(
-              title: 'TAS Orderan',
-              debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                fontFamily: 'Nunito-Medium',
-                primarySwatch: Colors.blue,
-                inputDecorationTheme: const InputDecorationTheme(
-                  contentPadding: EdgeInsets.symmetric(vertical: 15),
-                ),
-                useMaterial3: true,
-              ),
-              home: _home,
-              routes: <String, WidgetBuilder>{
-                '/home': (BuildContext context) => const Home(),
-                // '/harga': (BuildContext context) => new Harga(),
-                // "/onboarding": (BuildContext context) => new Onboarding(),
-                // "/profiles": (BuildContext context) => new Profiles(),
-                // "/ongkir": (BuildContext context) => new Ongkir(),
-                // "/order": (BuildContext context) => new Order(),
-                // "/asal_ongkir": (BuildContext context) => new Asal_Ongkir(),
-                // "/tujuan_ongkir": (BuildContext context) => new Tujuan_Ongkir(),
-                "/login": (BuildContext context) => Login(),
-                "/register": (BuildContext context) => Register(),
-                // "/total": (BuildContext context) => new Total(),
-                // "/bayar": (BuildContext context) => new Bayar(),
-                "/otp_verification": (BuildContext context) =>
-                    const OtpVerification(),
-                // "/payment_success": (BuildContext context) => new PaymentSuccess(),
-                // "/list_pesanan": (BuildContext context) => new ListPesanan(),
-                // "/chats": (BuildContext context) => new Chats(),
-                // "/syaratdanketentuan": (BuildContext context) =>
-                //     new SyaratKetentuanWidget(),
-                // "/faq": (BuildContext context) => new Faq(),
-                // "/favoritesList": (BuildContext context) => new FavoritesList(),
-                // "/notifications": (BuildContext context) => new Notifications(),
-                // "/homeverifikasi": (BuildContext context) => new HomeVerifikasi(),
-                // "/asal": (BuildContext context) => new Asal(),
-                // "/tujuan": (BuildContext context) => new Tujuan(),
-              });
-        },
-      ),
-    );
+    return MaterialApp(
+        title: 'TAS Orderan',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Nunito-Medium',
+          primarySwatch: Colors.blue,
+          inputDecorationTheme: const InputDecorationTheme(
+            contentPadding: EdgeInsets.symmetric(vertical: 15),
+          ),
+          useMaterial3: true,
+        ),
+        initialRoute: '/home',
+        routes: <String, WidgetBuilder>{
+          '/home': (BuildContext context) => const Home(),
+          // '/harga': (BuildContext context) => new Harga(),
+          // "/onboarding": (BuildContext context) => new Onboarding(),
+          // "/profiles": (BuildContext context) => new Profiles(),
+          "/ongkir": (BuildContext context) => Ongkir(),
+          // "/order": (BuildContext context) => new Order(),
+          // "/asal_ongkir": (BuildContext context) => new Asal_Ongkir(),
+          // "/tujuan_ongkir": (BuildContext context) => new Tujuan_Ongkir(),
+          "/login": (BuildContext context) => Login(),
+          "/register": (BuildContext context) => Register(),
+          // "/total": (BuildContext context) => new Total(),
+          // "/bayar": (BuildContext context) => new Bayar(),
+          "/otp_verification": (BuildContext context) =>
+              const OtpVerification(),
+          // "/payment_success": (BuildContext context) => new PaymentSuccess(),
+          // "/list_pesanan": (BuildContext context) => new ListPesanan(),
+          // "/chats": (BuildContext context) => new Chats(),
+          // "/syaratdanketentuan": (BuildContext context) =>
+          //     new SyaratKetentuanWidget(),
+          // "/faq": (BuildContext context) => new Faq(),
+          // "/favoritesList": (BuildContext context) => new FavoritesList(),
+          // "/notifications": (BuildContext context) => new Notifications(),
+          // "/homeverifikasi": (BuildContext context) => new HomeVerifikasi(),
+          // "/asal": (BuildContext context) => new Asal(),
+          // "/tujuan": (BuildContext context) => new Tujuan(),
+        });
   }
 }

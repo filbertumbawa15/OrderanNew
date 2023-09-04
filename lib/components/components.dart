@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:material_dialogs/dialogs.dart';
+import 'package:material_dialogs/widgets/buttons/icon_button.dart';
+import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
@@ -57,6 +61,17 @@ class Tools extends StatelessWidget {
         ),
         context: context,
         actions: [action]);
+  }
+
+  void bottomDialog(
+      BuildContext context, String msg, String title, List<Widget> action) {
+    return Dialogs.bottomMaterialDialog(
+        msg: msg, title: title, context: context, actions: action);
+  }
+
+  Future<void> trySomething(BuildContext context, String message) async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    alert(context, message);
   }
 
   @override

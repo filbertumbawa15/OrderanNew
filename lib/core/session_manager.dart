@@ -12,6 +12,11 @@ class SessionManager {
     String email,
     String password,
     String token,
+    String ktpPath,
+    String npwpPath,
+    String nik,
+    String npwp,
+    String tglLahir,
   ) {
     box.put(AppKey.nameKey, name);
     box.put(AppKey.userKey, user);
@@ -21,6 +26,11 @@ class SessionManager {
     box.put(AppKey.emailKey, email);
     box.put(AppKey.passwordKey, password);
     box.put(AppKey.tokenKey, token);
+    box.put(AppKey.ktpPathKey, ktpPath);
+    box.put(AppKey.npwpPathKey, npwpPath);
+    box.put(AppKey.nikKey, nik);
+    box.put(AppKey.npwpKey, npwp);
+    box.put(AppKey.tglLahirKey, tglLahir);
   }
 
   String? getActiveName() => box.get(AppKey.nameKey);
@@ -31,6 +41,11 @@ class SessionManager {
   String? getActiveEmail() => box.get(AppKey.emailKey);
   String? getActivePassword() => box.get(AppKey.passwordKey);
   String? getActiveToken() => box.get(AppKey.tokenKey);
+  String? getKtpPath() => box.get(AppKey.ktpPathKey);
+  String? getNpwpPath() => box.get(AppKey.npwpPathKey);
+  String? getActiveNik() => box.get(AppKey.nikKey);
+  String? getActiveNpwp() => box.get(AppKey.npwpKey);
+  String? getActiveTglLahir() => box.get(AppKey.tglLahirKey);
 
   bool anyActiveSession() {
     String? activeName = getActiveName();
@@ -41,6 +56,11 @@ class SessionManager {
     String? activeEmail = getActiveEmail();
     String? activePasword = getActivePassword();
     String? activeToken = getActiveToken();
+    String? activeKtpPath = getKtpPath();
+    String? activeNpwpPath = getNpwpPath();
+    String? activeNik = getActiveNik();
+    String? activeNpwp = getActiveNpwp();
+    String? activeTglLahir = getActiveTglLahir();
     return activeName != null &&
         activeUser != null &&
         activeTelp != null &&
@@ -48,7 +68,12 @@ class SessionManager {
         activeVerification != null &&
         activeEmail != null &&
         activePasword != null &&
-        activeToken != null;
+        activeToken != null &&
+        // activeKtpPath != null &&
+        activeNpwpPath != null &&
+        activeNik != null &&
+        activeNpwp != null &&
+        activeTglLahir != null;
   }
 
   void signout() {
@@ -64,6 +89,11 @@ class SessionManager {
     box.delete(AppKey.emailKey);
     box.delete(AppKey.passwordKey);
     box.delete(AppKey.tokenKey);
+    // box.delete(AppKey.ktpPathKey);
+    box.delete(AppKey.npwpPathKey);
+    box.delete(AppKey.nikKey);
+    box.delete(AppKey.npwpKey);
+    box.delete(AppKey.tglLahirKey);
   }
 }
 
@@ -81,4 +111,9 @@ class AppKey {
   static const String emailKey = 'EMAIL_KEY';
   static const String passwordKey = 'PASSWORD_KEY';
   static const String tokenKey = 'TOKEN_KEY';
+  static const String ktpPathKey = 'KTP_PATH_KEY';
+  static const String npwpPathKey = 'NPWP_PATH_KEY';
+  static const String nikKey = 'NIK_KEY';
+  static const String npwpKey = 'NPWP_KEY';
+  static const String tglLahirKey = 'TGL_LAHIR_KEY';
 }

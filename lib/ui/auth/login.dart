@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:tasorderan/bloc/user/login/login_bloc.dart';
@@ -108,6 +109,16 @@ class _LoginState extends State<Login> {
                                           BorderSide(color: Color(0xFFAEAEAE)),
                                     ),
                                   ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Masukkan Email";
+                                    }
+                                    if (!RegExp(r'\S+@\S+\.\S+')
+                                        .hasMatch(value)) {
+                                      return "Masukkan Email yang valid";
+                                    }
+                                    return null;
+                                  },
                                   onChanged: (val) {
                                     if (val.isNotEmpty &&
                                         _passwordController.text.isNotEmpty) {
@@ -170,6 +181,12 @@ class _LoginState extends State<Login> {
                                         ),
                                       ),
                                       obscureText: _passwordVisible!.value,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return "Masukkan Password";
+                                        }
+                                        return null;
+                                      },
                                       onChanged: (val) {
                                         if (val.isNotEmpty &&
                                             _emailController.text.isNotEmpty) {
@@ -199,8 +216,8 @@ class _LoginState extends State<Login> {
                                   },
                                   builder: (context, state) {
                                     if (state is LoginLoading) {
-                                      Future.delayed(const Duration(seconds: 0),
-                                          () {
+                                      SchedulerBinding.instance
+                                          .addPostFrameCallback((_) {
                                         components.showDia(
                                           context,
                                           SimpleFontelicoProgressDialogType
@@ -209,14 +226,16 @@ class _LoginState extends State<Login> {
                                         );
                                       });
                                     } else if (state is LoginError) {
-                                      components.dia!.hide();
-                                      final value = state
-                                          .response.errors!.values
-                                          .elementAt(0)[0];
-                                      Future.delayed(const Duration(seconds: 0),
-                                          () {
-                                        components.alert(context, value);
+                                      SchedulerBinding.instance
+                                          .addPostFrameCallback((_) {
+                                        components.dia!.hide();
+                                        final value = state.response.message;
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: Text(value!),
+                                        ));
                                       });
+                                      // components.trySomething(context, value!);
                                     }
                                     return ValueListenableBuilder(
                                       valueListenable: _isButtonDisabled!,
@@ -229,17 +248,22 @@ class _LoginState extends State<Login> {
                                           onPressed: _isButtonDisabled!.value
                                               ? null
                                               : () async {
-                                                  context
-                                                      .read<LoginBloc>()
-                                                      .add(LoginUserEvent(
-                                                        email: _emailController
-                                                            .text
-                                                            .toString(),
-                                                        password:
-                                                            _passwordController
-                                                                .text
-                                                                .toString(),
-                                                      ));
+                                                  if (loginFormState
+                                                      .currentState!
+                                                      .validate()) {
+                                                    context
+                                                        .read<LoginBloc>()
+                                                        .add(LoginUserEvent(
+                                                          email:
+                                                              _emailController
+                                                                  .text
+                                                                  .toString(),
+                                                          password:
+                                                              _passwordController
+                                                                  .text
+                                                                  .toString(),
+                                                        ));
+                                                  }
                                                 },
                                           child: const Text(
                                             'Login',

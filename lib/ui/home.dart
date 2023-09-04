@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:material_dialogs/widgets/buttons/icon_button.dart';
+import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
+import 'package:tasorderan/components/components.dart';
 import 'package:tasorderan/core/app_setting/app_setting_bloc.dart';
 import 'package:tasorderan/core/session_manager.dart';
 
@@ -26,7 +32,7 @@ class _HomeState extends State<Home> {
     return [
       const Dashboard(),
       const Profiles(),
-      // Settings(),
+      const Settings(),
     ];
   }
 
@@ -322,7 +328,6 @@ class _DashboardState extends State<Dashboard> {
                 children: <Widget>[
                   SizedBox(width: 10.0),
                   Expanded(
-                      // Wrap this column inside an expanded widget so that framework allocates max width for this column inside this row
                       child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -409,7 +414,7 @@ class _DashboardState extends State<Dashboard> {
                         //     'assets/imgs/no-internet.json',
                         //   );
                         // } else {
-                        //   Navigator.pushNamed(context, '/ongkir');
+                        Navigator.pushNamed(context, '/ongkir');
                         // }
                       },
                       child: const Padding(
@@ -741,13 +746,20 @@ class Profiles extends StatefulWidget {
 
 class _ProfilesState extends State<Profiles>
     with SingleTickerProviderStateMixin {
+  SessionManager sessionManager = SessionManager();
   int selectedIndex = 0;
   TabController? tabController;
+  Tools tools = Tools();
 
   @override
   void initState() {
-    tabController =
-        TabController(initialIndex: selectedIndex, length: 1, vsync: this);
+    tabController = TabController(
+        initialIndex: selectedIndex,
+        length: sessionManager.getActiveId() == null ||
+                sessionManager.getActiveVerification() == "0"
+            ? 1
+            : 2,
+        vsync: this);
     super.initState();
   }
 
@@ -759,7 +771,10 @@ class _ProfilesState extends State<Profiles>
     return BlocProvider(
       create: (context) => AppSettingBloc()..add(SettingAppEvent()),
       child: DefaultTabController(
-        length: 1,
+        length: sessionManager.getActiveId() == null ||
+                sessionManager.getActiveVerification() == "0"
+            ? 1
+            : 2,
         child: Scaffold(
           extendBodyBehindAppBar: true,
           extendBody: true,
@@ -837,24 +852,24 @@ class _ProfilesState extends State<Profiles>
             ],
           ),
         ),
-        // TabBar(
-        //   controller: tabController,
-        //   indicatorColor: Color(0xFF5599E9),
-        //   labelColor: Color(0xFF5599E9),
-        //   splashFactory: NoSplash.splashFactory,
-        //   unselectedLabelColor: Color(0xFF313131),
-        //   tabs: [
-        //     Padding(
-        //       padding: const EdgeInsets.all(8.0),
-        //       child: Text(
-        //         "Data User",
-        //         style: TextStyle(
-        //           fontFamily: 'Nunito-Medium',
-        //         ),
-        //       ),
-        //     ),
-        //   ],
-        // ),
+        TabBar(
+          controller: tabController,
+          indicatorColor: Color(0xFF5599E9),
+          labelColor: Color(0xFF5599E9),
+          splashFactory: NoSplash.splashFactory,
+          unselectedLabelColor: Color(0xFF313131),
+          tabs: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Data User",
+                style: TextStyle(
+                  fontFamily: 'Nunito-Medium',
+                ),
+              ),
+            ),
+          ],
+        ),
         Container(
           child: Column(
             children: <Widget>[
@@ -938,7 +953,6 @@ class _ProfilesState extends State<Profiles>
   }
 
   Widget alreadyLogin() {
-    SessionManager sessionManager = SessionManager();
     return ListView(
       // shrinkWrap: true,
       children: <Widget>[
@@ -968,7 +982,7 @@ class _ProfilesState extends State<Profiles>
                 height: 10,
               ),
               Text(
-                '${sessionManager.getActiveName()}',
+                sessionManager.getActiveName()!.toUpperCase(),
                 style: const TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
@@ -986,193 +1000,196 @@ class _ProfilesState extends State<Profiles>
             ],
           ),
         ),
-        // if (globals.verificationStatus == "0") ...[
-        TabBar(
-          controller: tabController,
-          indicatorColor: Color(0xFF5599E9),
-          labelColor: Color(0xFF5599E9),
-          splashFactory: NoSplash.splashFactory,
-          unselectedLabelColor: Color(0xFF313131),
-          tabs: const [
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                "Data User",
-                style: TextStyle(
-                  fontFamily: 'Nunito-Medium',
+        if (sessionManager.getActiveVerification() == "0") ...[
+          TabBar(
+            controller: tabController,
+            indicatorColor: const Color(0xFF5599E9),
+            labelColor: const Color(0xFF5599E9),
+            splashFactory: NoSplash.splashFactory,
+            unselectedLabelColor: const Color(0xFF313131),
+            tabs: const [
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "Data User",
+                  style: TextStyle(
+                    fontFamily: 'Nunito-Medium',
+                  ),
                 ),
               ),
-            ),
-          ],
-          onTap: (int index) {
-            setState(() {
-              selectedIndex = index;
-              tabController!.animateTo(index);
-            });
-          },
-        ),
-        IndexedStack(
-          children: <Widget>[
-            Visibility(
-              child: dataUser(),
-              maintainState: true,
-              visible: selectedIndex == 0,
-            ),
-          ],
-          index: selectedIndex,
-        ),
-        // ] else ...[
-        //   TabBar(
-        //     controller: tabController,
-        //     indicatorColor: Color(0xFF5599E9),
-        //     labelColor: Color(0xFF5599E9),
-        //     splashFactory: NoSplash.splashFactory,
-        //     unselectedLabelColor: Color(0xFF313131),
-        //     tabs: [
-        //       Padding(
-        //         padding: const EdgeInsets.all(8.0),
-        //         child: Text(
-        //           "Data User",
-        //           style: TextStyle(
-        //             fontFamily: 'Nunito-Medium',
-        //           ),
-        //         ),
-        //       ),
-        //       Padding(
-        //         padding: const EdgeInsets.all(8.0),
-        //         child: Text(
-        //           "Data Identitas",
-        //           style: TextStyle(
-        //             fontFamily: 'Nunito-Medium',
-        //           ),
-        //         ),
-        //       ),
-        //     ],
-        //     onTap: (int index) {
-        //       setState(() {
-        //         selectedIndex = index;
-        //         tabController.animateTo(index);
-        //       });
-        //     },
-        //   ),
-        //   IndexedStack(
-        //     children: <Widget>[
-        //       Visibility(
-        //         child: dataUser(),
-        //         maintainState: true,
-        //         visible: selectedIndex == 0,
-        //       ),
-        //       Visibility(
-        //         child: dataIdentitas(),
-        //         maintainState: true,
-        //         visible: selectedIndex == 1,
-        //       ),
-        //     ],
-        //     index: selectedIndex,
-        //   ),
-        // ],
+            ],
+            onTap: (int index) {
+              setState(() {
+                selectedIndex = index;
+                tabController!.animateTo(index);
+              });
+            },
+          ),
+          IndexedStack(
+            index: selectedIndex,
+            children: <Widget>[
+              Visibility(
+                maintainState: true,
+                visible: selectedIndex == 0,
+                child: dataUser(),
+              ),
+            ],
+          ),
+        ] else ...[
+          TabBar(
+            controller: tabController,
+            indicatorColor: const Color(0xFF5599E9),
+            labelColor: const Color(0xFF5599E9),
+            splashFactory: NoSplash.splashFactory,
+            unselectedLabelColor: const Color(0xFF313131),
+            tabs: const [
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "Data User",
+                  style: TextStyle(
+                    fontFamily: 'Nunito-Medium',
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "Data Identitas",
+                  style: TextStyle(
+                    fontFamily: 'Nunito-Medium',
+                  ),
+                ),
+              ),
+            ],
+            onTap: (int index) {
+              setState(() {
+                selectedIndex = index;
+                tabController!.animateTo(index);
+              });
+            },
+          ),
+          IndexedStack(
+            index: selectedIndex,
+            children: <Widget>[
+              Visibility(
+                maintainState: true,
+                visible: selectedIndex == 0,
+                child: dataUser(),
+              ),
+              Visibility(
+                // child: dataIdentitas(),
+                maintainState: true,
+                visible: selectedIndex == 1,
+                child: dataIdentitas(),
+                // child: const Text("asdf"),
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }
 
   Widget dataUser() {
-    SessionManager sessionManager = SessionManager();
-    return Container(
-      child: Column(
-        children: <Widget>[
-          ListTile(
-            title: const Text(
-              'Name',
-              style: TextStyle(
-                color: Color(0xFF777777),
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            subtitle: Text(
-              '${sessionManager.getActiveName()}',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF313131),
-              ),
+    return Column(
+      children: <Widget>[
+        ListTile(
+          title: const Text(
+            'Name',
+            style: TextStyle(
+              color: Color(0xFF777777),
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          const Divider(
-            color: Color(0xFF999999),
-            thickness: 2.0,
-            indent: 15.0,
-            endIndent: 15.0,
-          ),
-          const ListTile(
-            title: Text(
-              'Tanggal Lahir',
-              style: TextStyle(
-                color: Color(0xFF777777),
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            subtitle: Text(
-              "1 Januari 1990",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF313131),
-              ),
+          subtitle: Text(
+            '${sessionManager.getActiveName()}',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF313131),
             ),
           ),
-          const Divider(
-            color: Color(0xFF999999),
-            thickness: 2.0,
-            indent: 15.0,
-            endIndent: 15.0,
-          ),
-          ListTile(
-            title: const Text(
-              'No. Telp',
-              style: TextStyle(
-                color: Color(0xFF777777),
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            subtitle: Text(
-              '${sessionManager.getActiveTelp()}',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF313131),
-              ),
+        ),
+        const Divider(
+          color: Color(0xFF999999),
+          thickness: 2.0,
+          indent: 15.0,
+          endIndent: 15.0,
+        ),
+        ListTile(
+          title: const Text(
+            'Tanggal Lahir',
+            style: TextStyle(
+              color: Color(0xFF777777),
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          const Divider(
-            color: Color(0xFF999999),
-            thickness: 2.0,
-            indent: 15.0,
-            endIndent: 15.0,
+          subtitle: Text(
+            sessionManager.getActiveTglLahir() == null
+                ? "1 Januari 1990"
+                : DateFormat("dd-MM-yyyy").format(DateFormat("yyyy-MM-dd")
+                    .parse(sessionManager.getActiveTglLahir()!)),
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF313131),
+            ),
           ),
-          const SizedBox(
-            height: 15.0,
+        ),
+        const Divider(
+          color: Color(0xFF999999),
+          thickness: 2.0,
+          indent: 15.0,
+          endIndent: 15.0,
+        ),
+        ListTile(
+          title: const Text(
+            'No. Telp',
+            style: TextStyle(
+              color: Color(0xFF777777),
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          // if (globals.verificationStatus == "0") ...[
+          subtitle: Text(
+            '${sessionManager.getActiveTelp()}',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF313131),
+            ),
+          ),
+        ),
+        const Divider(
+          color: Color(0xFF999999),
+          thickness: 2.0,
+          indent: 15.0,
+          endIndent: 15.0,
+        ),
+        const SizedBox(
+          height: 15.0,
+        ),
+        if (sessionManager.getActiveVerification() == "0") ...[
           Padding(
             padding: const EdgeInsets.only(
                 left: 25.0, top: 0.0, bottom: 0.0, right: 25.0),
             child: ElevatedButton.icon(
-              label: Text(
+              label: const Text(
                 'Verifikasi Akun',
                 style:
                     TextStyle(color: Colors.white, fontFamily: 'Nunito-Medium'),
               ),
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 minimumSize: const Size.fromHeight(30),
-                backgroundColor: Color(0xFF5599E9),
+                backgroundColor: const Color(0xFF5599E9),
                 splashFactory: NoSplash.splashFactory,
                 elevation: 0,
               ),
-              icon: Icon(
+              icon: const Icon(
                 Icons.security,
                 color: Colors.white,
               ),
@@ -1181,445 +1198,435 @@ class _ProfilesState extends State<Profiles>
               },
             ),
           ),
-          // ] else if (globals.verificationStatus == "12") ...[
-          // Padding(
-          //   padding: const EdgeInsets.only(
-          //       left: 25.0, top: 0.0, bottom: 0.0, right: 25.0),
-          //   child: ElevatedButton.icon(
-          //     label: Text(
-          //       'Data sedang diproses',
-          //       style:
-          //           TextStyle(color: Colors.white, fontFamily: 'Nunito-Medium'),
-          //     ),
-          //     style: ElevatedButton.styleFrom(
-          //       padding: EdgeInsets.all(8.0),
-          //       minimumSize: const Size.fromHeight(30),
-          //       backgroundColor: Color.fromARGB(255, 245, 165, 36),
-          //       splashFactory: NoSplash.splashFactory,
-          //       elevation: 0,
-          //     ),
-          //     icon: Icon(
-          //       Icons.security,
-          //       color: Colors.white,
-          //     ),
-          //     onPressed: () {},
-          //   ),
-          // ),
-          // ] else if (globals.verificationStatus == "13") ...[
-          // Padding(
-          //   padding: const EdgeInsets.only(
-          //       left: 25.0, top: 0.0, bottom: 0.0, right: 25.0),
-          //   child: ElevatedButton.icon(
-          //     label: Text(
-          //       'Akun terverifikasi',
-          //       style:
-          //           TextStyle(color: Colors.white, fontFamily: 'Nunito-Medium'),
-          //     ),
-          //     style: ElevatedButton.styleFrom(
-          //       padding: EdgeInsets.all(8.0),
-          //       backgroundColor: Color(0xFF409658),
-          //       minimumSize: const Size.fromHeight(30),
-          //       splashFactory: NoSplash.splashFactory,
-          //       elevation: 0,
-          //     ),
-          //     icon: Icon(
-          //       Icons.check_circle,
-          //       color: Colors.white,
-          //     ),
-          //     onPressed: () {},
-          //   ),
-          // ),
-          // ] else if (globals.verificationStatus == "14") ...[
-          //   Padding(
-          //     padding: const EdgeInsets.only(
-          //         left: 25.0, top: 0.0, bottom: 0.0, right: 25.0),
-          //     child: ElevatedButton.icon(
-          //       label: Text(
-          //         'Data akun ditolak',
-          //         style: TextStyle(
-          //             color: Colors.white, fontFamily: 'Nunito-Medium'),
-          //       ),
-          //       style: ElevatedButton.styleFrom(
-          //         padding: EdgeInsets.all(8.0),
-          //         backgroundColor: Color.fromARGB(255, 221, 0, 0),
-          //         minimumSize: const Size.fromHeight(30),
-          //         splashFactory: NoSplash.splashFactory,
-          //         elevation: 0,
-          //       ),
-          //       icon: Icon(
-          //         Icons.cancel,
-          //         color: Colors.white,
-          //       ),
-          //       onPressed: () {
-          //         // return showDialog(
-          //         //     context: context,
-          //         //     barrierDismissible: false,
-          //         //     builder: (BuildContext context) {
-          //         //       return AlertDialog(
-          //         //         title: const Text(
-          //         //           'Data Verifikasi Anda Ditolak',
-          //         //           style: TextStyle(fontWeight: FontWeight.bold),
-          //         //         ),
-          //         //         content: SingleChildScrollView(
-          //         //             child: ListBody(
-          //         //           children: <Widget>[
-          //         //             Text(
-          //         //               "Data anda ditolak karena tidak memenuhi syarat, silahkan lakukan verifikasi data sekali lagi. \n\nKeterangan : ${globals.keteranganverifikasi.toLowerCase()}",
-          //         //             ),
-          //         //           ],
-          //         //         )),
-          //         //         actions: <Widget>[
-          //         //           TextButton(
-          //         //             onPressed: () {
-          //         //               Navigator.pop(context, 'OK');
-          //         //             },
-          //         //             child: const Text('OK'),
-          //         //           ),
-          //         //           TextButton(
-          //         //               onPressed: () async {
-          //         //                 Navigator.pop(context, 'Verifikasi Ulang');
-          //         //                 Navigator.push(
-          //         //                     context,
-          //         //                     MaterialPageRoute(
-          //         //                         builder: (context) => DataVerifikasi(
-          //         //                               npwpPath:
-          //         //                                   widget.selectednpwpPath,
-          //         //                               ktpPath: widget.selectedktpPath,
-          //         //                               user_id: widget.selecteduserid,
-          //         //                               nik: widget.selectednik,
-          //         //                               nama: widget.selectednama,
-          //         //                               alamatdetail:
-          //         //                                   widget.selectedalamatdetail,
-          //         //                               tglLahir:
-          //         //                                   widget.selectedtglLahir,
-          //         //                               npwp: widget.selectednpwp,
-          //         //                               isEdit: true,
-          //         //                             )));
-          //         //               },
-          //         //               child: const Text('Verifikasi Ulang')),
-          //         //         ],
-          //         //       );
-          //         //     });
-          //       },
-          //     ),
-          //   ),
-          // ],
+        ] else if (sessionManager.getActiveVerification() == "12") ...[
+          Padding(
+            padding: const EdgeInsets.only(
+                left: 25.0, top: 0.0, bottom: 0.0, right: 25.0),
+            child: ElevatedButton.icon(
+              label: const Text(
+                'Data sedang diproses',
+                style:
+                    TextStyle(color: Colors.white, fontFamily: 'Nunito-Medium'),
+              ),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(8.0),
+                minimumSize: const Size.fromHeight(30),
+                backgroundColor: const Color.fromARGB(255, 245, 165, 36),
+                splashFactory: NoSplash.splashFactory,
+                elevation: 0,
+              ),
+              icon: const Icon(
+                Icons.security,
+                color: Colors.white,
+              ),
+              onPressed: () {},
+            ),
+          ),
+        ] else if (sessionManager.getActiveVerification() == "13") ...[
+          Padding(
+            padding: const EdgeInsets.only(
+                left: 25.0, top: 0.0, bottom: 0.0, right: 25.0),
+            child: ElevatedButton.icon(
+              label: const Text(
+                'Akun terverifikasi',
+                style:
+                    TextStyle(color: Colors.white, fontFamily: 'Nunito-Medium'),
+              ),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(8.0),
+                backgroundColor: const Color(0xFF409658),
+                minimumSize: const Size.fromHeight(30),
+                splashFactory: NoSplash.splashFactory,
+                elevation: 0,
+              ),
+              icon: const Icon(
+                Icons.check_circle,
+                color: Colors.white,
+              ),
+              onPressed: () {},
+            ),
+          ),
+        ] else if (sessionManager.getActiveVerification() == "14") ...[
+          Padding(
+            padding: const EdgeInsets.only(
+                left: 25.0, top: 0.0, bottom: 0.0, right: 25.0),
+            child: ElevatedButton.icon(
+              label: const Text(
+                'Data akun ditolak',
+                style:
+                    TextStyle(color: Colors.white, fontFamily: 'Nunito-Medium'),
+              ),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(8.0),
+                backgroundColor: const Color.fromARGB(255, 221, 0, 0),
+                minimumSize: const Size.fromHeight(30),
+                splashFactory: NoSplash.splashFactory,
+                elevation: 0,
+              ),
+              icon: const Icon(
+                Icons.cancel,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                // return showDialog(
+                //     context: context,
+                //     barrierDismissible: false,
+                //     builder: (BuildContext context) {
+                //       return AlertDialog(
+                //         title: const Text(
+                //           'Data Verifikasi Anda Ditolak',
+                //           style: TextStyle(fontWeight: FontWeight.bold),
+                //         ),
+                //         content: SingleChildScrollView(
+                //             child: ListBody(
+                //           children: <Widget>[
+                //             Text(
+                //               "Data anda ditolak karena tidak memenuhi syarat, silahkan lakukan verifikasi data sekali lagi. \n\nKeterangan : ${globals.keteranganverifikasi.toLowerCase()}",
+                //             ),
+                //           ],
+                //         )),
+                //         actions: <Widget>[
+                //           TextButton(
+                //             onPressed: () {
+                //               Navigator.pop(context, 'OK');
+                //             },
+                //             child: const Text('OK'),
+                //           ),
+                //           TextButton(
+                //               onPressed: () async {
+                //                 Navigator.pop(context, 'Verifikasi Ulang');
+                //                 Navigator.push(
+                //                     context,
+                //                     MaterialPageRoute(
+                //                         builder: (context) => DataVerifikasi(
+                //                               npwpPath:
+                //                                   widget.selectednpwpPath,
+                //                               ktpPath: widget.selectedktpPath,
+                //                               user_id: widget.selecteduserid,
+                //                               nik: widget.selectednik,
+                //                               nama: widget.selectednama,
+                //                               alamatdetail:
+                //                                   widget.selectedalamatdetail,
+                //                               tglLahir:
+                //                                   widget.selectedtglLahir,
+                //                               npwp: widget.selectednpwp,
+                //                               isEdit: true,
+                //                             )));
+                //               },
+                //               child: const Text('Verifikasi Ulang')),
+                //         ],
+                //       );
+                //     });
+              },
+            ),
+          ),
         ],
-      ),
+      ],
     );
   }
 
-  // Widget dataIdentitas() {
-  //   return ListView(
-  //     physics: NeverScrollableScrollPhysics(),
-  //     shrinkWrap: true,
-  //     children: [
-  //       Padding(
-  //         padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 10.0),
-  //         child: Image.file(
-  //           globals.ktpPath,
-  //           fit: BoxFit.contain,
-  //           width: 170,
-  //           height: 170,
-  //         ),
-  //       ),
-  //       ListTile(
-  //         title: Text(
-  //           'NIK',
-  //           style: TextStyle(
-  //             color: Color(0xFF777777),
-  //             fontSize: 14,
-  //             fontWeight: FontWeight.bold,
-  //           ),
-  //         ),
-  //         subtitle: Text(
-  //           '${globals.nik}',
-  //           style: TextStyle(
-  //             fontSize: 20,
-  //             fontWeight: FontWeight.bold,
-  //             color: Color(0xFF313131),
-  //           ),
-  //         ),
-  //       ),
-  //       Divider(
-  //         color: Color(0xFF999999),
-  //         thickness: 2.0,
-  //         indent: 15.0,
-  //         endIndent: 15.0,
-  //       ),
-  //       Padding(
-  //         padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 10.0),
-  //         child: Image.file(
-  //           globals.npwpPath,
-  //           fit: BoxFit.contain,
-  //           width: 170,
-  //           height: 170,
-  //         ),
-  //       ),
-  //       ListTile(
-  //         title: Text(
-  //           'NPWP',
-  //           style: TextStyle(
-  //             color: Color(0xFF777777),
-  //             fontSize: 14,
-  //             fontWeight: FontWeight.bold,
-  //           ),
-  //         ),
-  //         subtitle: Text(
-  //           '${globals.npwp}',
-  //           style: TextStyle(
-  //             fontSize: 20,
-  //             fontWeight: FontWeight.bold,
-  //             color: Color(0xFF313131),
-  //           ),
-  //         ),
-  //       ),
-  //       Divider(
-  //         color: Color(0xFF999999),
-  //         thickness: 2.0,
-  //         indent: 15.0,
-  //         endIndent: 15.0,
-  //       ),
-  //     ],
-  //   );
-  // }
+  Widget dataIdentitas() {
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 10.0),
+          child: Image.file(
+            File(sessionManager.getKtpPath()!),
+            fit: BoxFit.contain,
+            width: 170,
+            height: 170,
+          ),
+        ),
+        ListTile(
+          title: const Text(
+            'NIK',
+            style: TextStyle(
+              color: Color(0xFF777777),
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          subtitle: Text(
+            '${sessionManager.getActiveNik()}',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF313131),
+            ),
+          ),
+        ),
+        const Divider(
+          color: Color(0xFF999999),
+          thickness: 2.0,
+          indent: 15.0,
+          endIndent: 15.0,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 10.0),
+          child: Image.file(
+            File(sessionManager.getNpwpPath()!),
+            fit: BoxFit.contain,
+            width: 170,
+            height: 170,
+          ),
+        ),
+        ListTile(
+          title: const Text(
+            'NPWP',
+            style: TextStyle(
+              color: Color(0xFF777777),
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          subtitle: Text(
+            '${sessionManager.getActiveNpwp()}',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF313131),
+            ),
+          ),
+        ),
+        const Divider(
+          color: Color(0xFF999999),
+          thickness: 2.0,
+          indent: 15.0,
+          endIndent: 15.0,
+        ),
+      ],
+    );
+  }
 }
 
-// class Settings extends StatefulWidget {
-//   // final File selectednpwpPath;
-//   // final File selectedktpPath;
-//   // final String selectednik;
-//   // final String selectedalamatdetail;
-//   // final String selectednama;
-//   // final String selectedtglLahir;
-//   // final String selectednpwp;
-//   // final int selecteduserid;
+class Settings extends StatefulWidget {
+  // final File selectednpwpPath;
+  // final File selectedktpPath;
+  // final String selectednik;
+  // final String selectedalamatdetail;
+  // final String selectednama;
+  // final String selectedtglLahir;
+  // final String selectednpwp;
+  // final int selecteduserid;
 
-//   const Settings({
-//     Key? key,
-//     // this.selectednpwpPath,
-//     // this.selectedktpPath,
-//     // this.selectednik,
-//     // this.selectedalamatdetail,
-//     // this.selectednama,
-//     // this.selectedtglLahir,
-//     // this.selectednpwp,
-//     // this.selecteduserid,
-//   }) : super(key: key);
+  const Settings({
+    Key? key,
+    // this.selectednpwpPath,
+    // this.selectedktpPath,
+    // this.selectednik,
+    // this.selectedalamatdetail,
+    // this.selectednama,
+    // this.selectedtglLahir,
+    // this.selectednpwp,
+    // this.selecteduserid,
+  }) : super(key: key);
 
-//   @override
-//   _SettingsState createState() => _SettingsState();
-// }
+  @override
+  _SettingsState createState() => _SettingsState();
+}
 
-// class _SettingsState extends State<Settings> {
-//   // final _auth = FirebaseAuth.instance;
+class _SettingsState extends State<Settings> {
+  // final _auth = FirebaseAuth.instance;
 
-//   @override
-//   void initState() {
-//     super.initState();
-//   }
+  @override
+  void initState() {
+    super.initState();
+  }
 
-//   @override
-//   void dispose() {
-//     // TODO: implement dispose
-//     super.dispose();
-//   }
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
-//   var size, height, width;
-//   final _controller01 = ValueNotifier<bool>(false);
+  var size, height, width;
 
-//   Widget build(BuildContext context) {
-//     size = MediaQuery.of(context).size;
-//     height = size.height;
-//     width = size.width;
-//     return Scaffold(
-//       extendBodyBehindAppBar: true,
-//       extendBody: true,
-//       body: Container(
-//         height: height,
-//         width: width,
-//         child: ListView(
-//           children: [
-//             Padding(
-//               padding: const EdgeInsets.all(10.0),
-//               child: Text(
-//                 "Pengaturan",
-//                 style: TextStyle(
-//                   fontSize: 20.0,
-//                   fontWeight: FontWeight.bold,
-//                   fontFamily: 'Nunito-ExtraBold',
-//                 ),
-//               ),
-//             ),
-//             // ListTile(
-//             //   title: Text(
-//             //     'Mode Gelap',
-//             //     style: TextStyle(
-//             //       color: Color(0xFF313131),
-//             //       fontSize: 20,
-//             //       fontFamily: 'Nunito-Medium',
-//             //     ),
-//             //   ),
-//             //   trailing: AdvancedSwitch(
-//             //     controller: _controller01,
-//             //   ),
-//             // ),
-//             ListTile(
-//                 title: Text(
-//                   'Hubungi Kami',
-//                   style: TextStyle(
-//                     color: Color(0xFF313131),
-//                     fontSize: 20,
-//                     fontFamily: 'Nunito-Medium',
-//                   ),
-//                 ),
-//                 trailing: Icon(
-//                   Icons.arrow_forward_ios,
-//                   color: Color(0xFF313131),
-//                 ),
-//                 onTap: () {
-//                   Navigator.pushNamed(context, '/chats');
-//                 }),
-//             ListTile(
-//               title: Text(
-//                 'Syarat dan Ketentuan',
-//                 style: TextStyle(
-//                   color: Color(0xFF313131),
-//                   fontSize: 20,
-//                   fontFamily: 'Nunito-Medium',
-//                 ),
-//               ),
-//               trailing: Icon(
-//                 Icons.arrow_forward_ios,
-//                 color: Color(0xFF313131),
-//               ),
-//               onTap: () {
-//                 Navigator.pushNamed(context, '/syaratdanketentuan');
-//               },
-//             ),
-//             ListTile(
-//               title: Text(
-//                 'Bantuan',
-//                 style: TextStyle(
-//                   color: Color(0xFF313131),
-//                   fontSize: 20,
-//                   fontFamily: 'Nunito-Medium',
-//                 ),
-//               ),
-//               trailing: Icon(
-//                 Icons.arrow_forward_ios,
-//                 color: Color(0xFF313131),
-//               ),
-//               onTap: () {
-//                 Navigator.pushNamed(context, '/faq');
-//               },
-//             ),
-//             ListTile(
-//               title: Text(
-//                 'Favorit',
-//                 style: TextStyle(
-//                   color: Color(0xFF313131),
-//                   fontSize: 20,
-//                   fontFamily: 'Nunito-Medium',
-//                 ),
-//               ),
-//               trailing: Icon(
-//                 Icons.arrow_forward_ios,
-//                 color: Color(0xFF313131),
-//               ),
-//               onTap: () {
-//                 // Navigator.push(
-//                 //     context,
-//                 //     MaterialPageRoute(
-//                 //         builder: (context) => FavoritesList(param: 'List')));
-//                 // Navigator.pushNamed(
-//                 //   context,
-//                 //   '/favoritesList',
-//                 //   arguments: FavoritesList(param: 'List'),
-//                 // );
-//               },
-//             ),
-//             SizedBox(height: 20.0),
-//             // if (globals.loggedIn == true) ...[
-//             //   ListTile(
-//             //     onTap: () {
-//             //       alert();
-//             //     },
-//             //     title: Text(
-//             //       'Logout',
-//             //       style: TextStyle(
-//             //         color: Color(0xFFE95555),
-//             //         fontSize: 20,
-//             //         fontWeight: FontWeight.bold,
-//             //         fontFamily: 'Nunito-Medium',
-//             //       ),
-//             //     ),
-//             //     leading: Icon(
-//             //       Icons.logout_outlined,
-//             //       color: Color(0xFFE95555),
-//             //     ),
-//             //   ),
-//             // ] else ...[
-//             InkWell(
-//               onTap: () {
-//                 Navigator.pushNamed(context, '/login');
-//               },
-//               child: ListTile(
-//                 title: Text(
-//                   'Login',
-//                   style: TextStyle(
-//                     color: Color(0xFF5599E9),
-//                     fontSize: 20,
-//                     fontWeight: FontWeight.bold,
-//                     fontFamily: 'Nunito-Medium',
-//                   ),
-//                 ),
-//                 leading: Icon(
-//                   Icons.login_outlined,
-//                   color: Color(0xFF5599E9),
-//                 ),
-//               ),
-//             ),
-//           ],
-//           // ],
-//         ),
-//         // child: alreadyLogin(),
-//       ),
-//     );
-//   }
+  final components = Tools();
 
-//   // Widget alert() {
-//   //   Dialogs.bottomMaterialDialog(
-//   //       msg: 'Apakah anda yakin? kamu tidak mengembalikan tindakan ini',
-//   //       title: 'Logout',
-//   //       context: context,
-//   //       actions: [
-//   //         IconsOutlineButton(
-//   //           onPressed: () {
-//   //             Navigator.of(context).pop();
-//   //           },
-//   //           text: 'Cancel',
-//   //           iconData: Icons.cancel_outlined,
-//   //           textStyle: TextStyle(color: Colors.grey),
-//   //           iconColor: Colors.grey,
-//   //         ),
-//   //         IconsButton(
-//   //           onPressed: () async {
-//   //             await _auth.signOut();
-//   //             globals.prefs.remove('user');
-//   //             globals.pusher.disconnect();
-//   //             Navigator.of(context).pushNamedAndRemoveUntil(
-//   //                 '/onboarding', (Route<dynamic> route) => false);
-//   //           },
-//   //           text: 'Logout',
-//   //           iconData: Icons.logout,
-//   //           color: Colors.red,
-//   //           textStyle: TextStyle(color: Colors.white),
-//   //           iconColor: Colors.white,
-//   //         ),
-//   //       ]);
-//   // }
-// }
+  SessionManager sessionManager = SessionManager();
+
+  @override
+  Widget build(BuildContext context) {
+    size = MediaQuery.of(context).size;
+    height = size.height;
+    width = size.width;
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      extendBody: true,
+      body: SizedBox(
+        height: height,
+        width: width,
+        child: ListView(
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                "Pengaturan",
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Nunito-ExtraBold',
+                ),
+              ),
+            ),
+            ListTile(
+                title: const Text(
+                  'Hubungi Kami',
+                  style: TextStyle(
+                    color: Color(0xFF313131),
+                    fontSize: 20,
+                    fontFamily: 'Nunito-Medium',
+                  ),
+                ),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios,
+                  color: Color(0xFF313131),
+                ),
+                onTap: () {
+                  Navigator.pushNamed(context, '/chats');
+                }),
+            ListTile(
+              title: const Text(
+                'Syarat dan Ketentuan',
+                style: TextStyle(
+                  color: Color(0xFF313131),
+                  fontSize: 20,
+                  fontFamily: 'Nunito-Medium',
+                ),
+              ),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                color: Color(0xFF313131),
+              ),
+              onTap: () {
+                Navigator.pushNamed(context, '/syaratdanketentuan');
+              },
+            ),
+            ListTile(
+              title: const Text(
+                'Bantuan',
+                style: TextStyle(
+                  color: Color(0xFF313131),
+                  fontSize: 20,
+                  fontFamily: 'Nunito-Medium',
+                ),
+              ),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                color: Color(0xFF313131),
+              ),
+              onTap: () {
+                Navigator.pushNamed(context, '/faq');
+              },
+            ),
+            ListTile(
+              title: const Text(
+                'Favorit',
+                style: TextStyle(
+                  color: Color(0xFF313131),
+                  fontSize: 20,
+                  fontFamily: 'Nunito-Medium',
+                ),
+              ),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                color: Color(0xFF313131),
+              ),
+              onTap: () {
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => FavoritesList(param: 'List')));
+                // Navigator.pushNamed(
+                //   context,
+                //   '/favoritesList',
+                //   arguments: FavoritesList(param: 'List'),
+                // );
+              },
+            ),
+            const SizedBox(height: 20.0),
+            if (sessionManager.getActiveId() == null) ...[
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, '/login');
+                },
+                child: const ListTile(
+                  title: Text(
+                    'Login',
+                    style: TextStyle(
+                      color: Color(0xFF5599E9),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Nunito-Medium',
+                    ),
+                  ),
+                  leading: Icon(
+                    Icons.login_outlined,
+                    color: Color(0xFF5599E9),
+                  ),
+                ),
+              ),
+            ] else ...[
+              InkWell(
+                onTap: () {
+                  components.bottomDialog(
+                      context,
+                      'Apakah anda yakin? kamu tidak mengembalikan tindakan ini',
+                      'Logout', [
+                    IconsButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      text: 'Cancel',
+                      iconData: Icons.cancel_outlined,
+                      color: const Color.fromARGB(255, 230, 230, 230),
+                      textStyle: const TextStyle(color: Colors.grey),
+                      iconColor: Colors.grey,
+                    ),
+                    IconsButton(
+                      onPressed: () async {
+                        sessionManager.signout();
+                        components.showDia(context,
+                            SimpleFontelicoProgressDialogType.normal, 'Normal');
+                        // globals.pusher.disconnect();
+                        Future.delayed(const Duration(seconds: 3), () {
+                          components.dia!.hide();
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, '/login', (route) => false);
+                        });
+                      },
+                      text: 'Logout',
+                      iconData: Icons.logout,
+                      color: Colors.red,
+                      textStyle: const TextStyle(color: Colors.white),
+                      iconColor: Colors.white,
+                    ),
+                  ]);
+                },
+                child: const ListTile(
+                  title: Text(
+                    'Logout',
+                    style: TextStyle(
+                      color: Color(0xFFE95555),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Nunito-Medium',
+                    ),
+                  ),
+                  leading: Icon(
+                    Icons.logout_outlined,
+                    color: Color(0xFFE95555),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 // // class Skeleton extends StatelessWidget {
 // //   const Skeleton({
