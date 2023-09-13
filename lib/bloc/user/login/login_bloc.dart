@@ -1,8 +1,4 @@
-import 'dart:io';
-
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
-import 'package:tasorderan/components/components.dart';
 import 'package:tasorderan/core/session_manager.dart';
 import 'package:tasorderan/params/register_user_params.dart';
 import 'package:tasorderan/repo/auth_repository.dart';
@@ -20,7 +16,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   void _loginUser(LoginUserEvent event, Emitter<LoginState> emit) async {
     UserRegisterResponse response = UserRegisterResponse();
-    Tools tools = Tools();
     final params = LoginParam(
       event.email,
       event.password,

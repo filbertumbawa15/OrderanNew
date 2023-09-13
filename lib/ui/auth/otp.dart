@@ -108,7 +108,6 @@ class _OtpVerificationState extends State<OtpVerification>
                             components.dia!.hide();
                             Future.delayed(const Duration(seconds: 0), () {
                               components.alertBerhasilPesan(
-                                context,
                                 "Akun anda berhasil ter-verifikasi, silahkan login untuk melakukan pemesanan.",
                                 "Register Berhasil",
                                 "assets/imgs/updated-transaction.json",
@@ -132,10 +131,7 @@ class _OtpVerificationState extends State<OtpVerification>
                         builder: (context, state) {
                           if (state is OtpLoading) {
                             Future.delayed(const Duration(seconds: 0), () {
-                              components.showDia(
-                                  context,
-                                  SimpleFontelicoProgressDialogType.normal,
-                                  'Normal');
+                              components.showDia();
                             });
                           } else if (state is OtpError) {
                             components.dia!.hide();

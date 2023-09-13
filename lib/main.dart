@@ -9,8 +9,12 @@ import 'package:tasorderan/core/session_manager.dart';
 import 'package:tasorderan/ui/auth/login.dart';
 import 'package:tasorderan/ui/auth/otp.dart';
 import 'package:tasorderan/ui/auth/register.dart';
+import 'package:tasorderan/ui/cekongkir/asal.dart';
+import 'package:tasorderan/ui/cekongkir/harga.dart';
 import 'package:tasorderan/ui/cekongkir/ongkir.dart';
+import 'package:tasorderan/ui/cekongkir/tujuan.dart';
 import 'package:tasorderan/ui/home.dart';
+import 'package:tasorderan/ui/order/order.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -21,97 +25,16 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-// @pragma('vm:entry-point')
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage? message) async {
-//   print("Handling background message ${message.messageId}");
-// }
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  // await MaskForCameraView.initialize();
-  // await Firebase.initializeApp();
-  // await FirebaseMessaging.instance.getInitialMessage();
-  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  // NotificationService().init();
-  // HttpOverrides.global = MyHttpOverrides();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Hive.initFlutter();
   await Hive.openBox('session');
   runApp(const MyApp());
   FlutterNativeSplash.remove();
 }
-
-// Future<void> _isAndroidPermissionGranted() async {
-//   if (Platform.isAndroid) {
-//     await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-//         AndroidFlutterLocalNotificationsPlugin>();
-//   }
-// }
-
-// initInfo() {
-//   var androidInitialize =
-//       const AndroidInitializationSettings('@mipmap/ic_launcher');
-//   var iOSInitialize = const IOSInitializationSettings();
-//   var initInitializationSettings =
-//       InitializationSettings(android: androidInitialize, iOS: iOSInitialize);
-//   flutterLocalNotificationsPlugin.initialize(initInitializationSettings,
-//       onSelectNotification: (String payload) async {
-//     try {
-//       if (payload != null && payload.isNotEmpty) {
-//       } else {}
-//     } catch (e) {}
-//     return;
-//   });
-
-//   FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-//     print("----------------------onMessage----------------------");
-//     print(
-//         'onMessage : ${message.notification?.title}/${message.notification?.body}');
-
-//     BigTextStyleInformation bigTextStyleInformation = BigTextStyleInformation(
-//       message.notification.body.toString(),
-//       htmlFormatBigText: true,
-//       contentTitle: message.notification.title.toString(),
-//       htmlFormatContentTitle: true,
-//     );
-//     AndroidNotificationDetails androidPlatformChannelSpecifics =
-//         AndroidNotificationDetails(
-//       'dbfood',
-//       'dbfood',
-//       importance: Importance.max,
-//       styleInformation: bigTextStyleInformation,
-//       priority: Priority.max,
-//       playSound: false,
-//     );
-//     NotificationDetails platformChannelSpecifics =
-//         NotificationDetails(android: androidPlatformChannelSpecifics);
-//     await flutterLocalNotificationsPlugin.show(0, message.notification?.title,
-//         message.notification?.body, platformChannelSpecifics,
-//         payload: message.data['body']);
-//   });
-// }
-
-// void requestPermission() async {
-//   FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-//   NotificationSettings settings = await messaging.requestPermission(
-//     alert: true,
-//     announcement: true,
-//     badge: true,
-//     carPlay: true,
-//     criticalAlert: true,
-//     provisional: true,
-//     sound: true,
-//   );
-
-//   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-//     print("User granted permission");
-//   } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
-//     print("User granted provosional permission");
-//   } else {
-//     print("User declined or has not accepted permission");
-//   }
-// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -120,6 +43,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        navigatorKey: navigatorKey,
         title: 'TAS Orderan',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
@@ -133,11 +57,11 @@ class MyApp extends StatelessWidget {
         initialRoute: '/home',
         routes: <String, WidgetBuilder>{
           '/home': (BuildContext context) => const Home(),
-          // '/harga': (BuildContext context) => new Harga(),
+          '/harga': (BuildContext context) => const Harga(),
           // "/onboarding": (BuildContext context) => new Onboarding(),
           // "/profiles": (BuildContext context) => new Profiles(),
           "/ongkir": (BuildContext context) => Ongkir(),
-          // "/order": (BuildContext context) => new Order(),
+          "/order": (BuildContext context) => const Order(),
           // "/asal_ongkir": (BuildContext context) => new Asal_Ongkir(),
           // "/tujuan_ongkir": (BuildContext context) => new Tujuan_Ongkir(),
           "/login": (BuildContext context) => Login(),
@@ -155,8 +79,8 @@ class MyApp extends StatelessWidget {
           // "/favoritesList": (BuildContext context) => new FavoritesList(),
           // "/notifications": (BuildContext context) => new Notifications(),
           // "/homeverifikasi": (BuildContext context) => new HomeVerifikasi(),
-          // "/asal": (BuildContext context) => new Asal(),
-          // "/tujuan": (BuildContext context) => new Tujuan(),
+          "/asal": (BuildContext context) => const AsalOngkir(),
+          "/tujuan": (BuildContext context) => const TujuanOngkir(),
         });
   }
 }

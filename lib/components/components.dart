@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:material_dialogs/dialogs.dart';
 import 'package:material_dialogs/widgets/buttons/icon_button.dart';
@@ -8,6 +9,7 @@ import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
+import 'package:tasorderan/main.dart';
 
 class Tools extends StatelessWidget {
   Tools({Key? key});
@@ -23,14 +25,14 @@ class Tools extends StatelessWidget {
     );
   }
 
-  void showDia(BuildContext context, SimpleFontelicoProgressDialogType type,
-      String text) async {
+  void showDia() async {
     dia ??= SimpleFontelicoProgressDialog(
-        context: context, barrierDimisable: false);
-    if (type == SimpleFontelicoProgressDialogType.custom) {
+        context: navigatorKey.currentContext!, barrierDimisable: false);
+    if (SimpleFontelicoProgressDialogType.normal ==
+        SimpleFontelicoProgressDialogType.custom) {
       dia!.show(
-          message: text,
-          type: type,
+          message: 'Normal',
+          type: SimpleFontelicoProgressDialogType.normal,
           width: 150.0,
           height: 75.0,
           loadingIndicator: const Text(
@@ -39,8 +41,8 @@ class Tools extends StatelessWidget {
           ));
     } else {
       dia!.show(
-          message: text,
-          type: type,
+          message: 'Normal',
+          type: SimpleFontelicoProgressDialogType.normal,
           horizontal: true,
           width: 150.0,
           height: 75.0,
@@ -49,8 +51,8 @@ class Tools extends StatelessWidget {
     }
   }
 
-  Future<void> alertBerhasilPesan(BuildContext context, String keterangan,
-      String title, String path, Widget action) {
+  Future<void> alertBerhasilPesan(
+      String keterangan, String title, String path, Widget action) {
     return Dialogs.materialDialog(
         color: Colors.white,
         msg: keterangan,
@@ -59,7 +61,7 @@ class Tools extends StatelessWidget {
           path,
           fit: BoxFit.contain,
         ),
-        context: context,
+        context: navigatorKey.currentContext!,
         actions: [action]);
   }
 
@@ -77,5 +79,16 @@ class Tools extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
+  }
+}
+
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    return TextEditingValue(
+      text: newValue.text.toUpperCase(),
+      selection: newValue.selection,
+    );
   }
 }

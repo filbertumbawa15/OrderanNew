@@ -301,11 +301,7 @@ class _RegisterState extends State<Register> {
                                 if (state is RegisterUserLoading) {
                                   Future.delayed(const Duration(seconds: 0),
                                       () {
-                                    components.showDia(
-                                      context,
-                                      SimpleFontelicoProgressDialogType.normal,
-                                      'Normal',
-                                    );
+                                    components.showDia();
                                   });
                                 } else if (state is RegisterUserError) {
                                   components.dia!.hide();

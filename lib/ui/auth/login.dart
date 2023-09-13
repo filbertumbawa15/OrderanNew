@@ -204,76 +204,64 @@ class _LoginState extends State<Login> {
                           width: double.infinity,
                           child: Padding(
                             padding: const EdgeInsets.only(top: 15),
-                            child: ValueListenableBuilder(
-                              valueListenable: _isButtonDisabled!,
-                              builder: (context, value, child) {
-                                return BlocConsumer<LoginBloc, LoginState>(
-                                  listener: (context, state) async {
-                                    if (state is LoginSuccess) {
-                                      await Navigator.pushReplacementNamed(
-                                          context, '/home');
-                                    }
-                                  },
-                                  builder: (context, state) {
-                                    if (state is LoginLoading) {
-                                      SchedulerBinding.instance
-                                          .addPostFrameCallback((_) {
-                                        components.showDia(
-                                          context,
-                                          SimpleFontelicoProgressDialogType
-                                              .normal,
-                                          'Normal',
-                                        );
-                                      });
-                                    } else if (state is LoginError) {
-                                      SchedulerBinding.instance
-                                          .addPostFrameCallback((_) {
-                                        components.dia!.hide();
-                                        final value = state.response.message;
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                          content: Text(value!),
-                                        ));
-                                      });
-                                      // components.trySomething(context, value!);
-                                    }
-                                    return ValueListenableBuilder(
-                                      valueListenable: _isButtonDisabled!,
-                                      builder: (context, value, child) {
-                                        return ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                const Color(0xFF5599E9),
-                                          ),
-                                          onPressed: _isButtonDisabled!.value
-                                              ? null
-                                              : () async {
-                                                  if (loginFormState
-                                                      .currentState!
-                                                      .validate()) {
-                                                    context
-                                                        .read<LoginBloc>()
-                                                        .add(LoginUserEvent(
-                                                          email:
-                                                              _emailController
-                                                                  .text
-                                                                  .toString(),
-                                                          password:
-                                                              _passwordController
-                                                                  .text
-                                                                  .toString(),
-                                                        ));
-                                                  }
-                                                },
-                                          child: const Text(
-                                            'Login',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15.0,
-                                            ),
-                                          ),
-                                        );
-                                      },
+                            child: BlocConsumer<LoginBloc, LoginState>(
+                              listener: (context, state) async {
+                                if (state is LoginSuccess) {
+                                  await Navigator.pushReplacementNamed(
+                                      context, '/home');
+                                }
+                              },
+                              builder: (context, state) {
+                                if (state is LoginLoading) {
+                                  SchedulerBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    components.showDia();
+                                  });
+                                } else if (state is LoginError) {
+                                  SchedulerBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    components.dia!.hide();
+                                    final value = state.response.message;
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: Text(value!),
+                                    ));
+                                  });
+                                  // components.trySomething(context, value!);
+                                }
+                                return ValueListenableBuilder(
+                                  valueListenable: _isButtonDisabled!,
+                                  builder: (context, value, child) {
+                                    return ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xFF5599E9),
+                                      ),
+                                      onPressed: _isButtonDisabled!.value
+                                          ? null
+                                          : () async {
+                                              if (loginFormState.currentState!
+                                                  .validate()) {
+                                                context
+                                                    .read<LoginBloc>()
+                                                    .add(LoginUserEvent(
+                                                      email: _emailController
+                                                          .text
+                                                          .toString(),
+                                                      password:
+                                                          _passwordController
+                                                              .text
+                                                              .toString(),
+                                                    ));
+                                              }
+                                            },
+                                      child: const Text(
+                                        'Login',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15.0,
+                                        ),
+                                      ),
                                     );
                                   },
                                 );

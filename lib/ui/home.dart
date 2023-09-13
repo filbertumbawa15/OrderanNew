@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:material_dialogs/widgets/buttons/icon_button.dart';
-import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
+import 'package:tasorderan/bloc/user/validasi/validasi_bloc.dart';
 import 'package:tasorderan/components/components.dart';
 import 'package:tasorderan/core/app_setting/app_setting_bloc.dart';
 import 'package:tasorderan/core/session_manager.dart';
@@ -242,7 +242,7 @@ class Dashboard extends StatefulWidget {
     // this.selecteduserid,
   }) : super(key: key);
   @override
-  _DashboardState createState() => _DashboardState();
+  State<Dashboard> createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
@@ -251,6 +251,8 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     // globals.dateAus = DateTime.now().toUtc().toLocal();
   }
+
+  final components = Tools();
 
   // Future<bool> checkOrderan(var user_id) async {
   //   var data = {"id": user_id};
@@ -317,377 +319,286 @@ class _DashboardState extends State<Dashboard> {
         ],
       ),
       backgroundColor: const Color(0xFFF1F1EF),
-      body: ListView(
-        padding: const EdgeInsets.all(8.0),
-        children: [
-          const SizedBox(height: 15.0),
-          const Column(
-            children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(width: 10.0),
-                  Expanded(
-                      child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "PT. TRANSPORINDO AGUNG SEJAHTERA",
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
+      body: BlocProvider(
+        create: (context) => ValidasiBloc(),
+        child: ListView(
+          padding: const EdgeInsets.all(8.0),
+          children: [
+            const SizedBox(height: 15.0),
+            const Column(
+              children: <Widget>[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(width: 10.0),
+                    Expanded(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              "PT. TRANSPORINDO AGUNG SEJAHTERA",
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              softWrap: true,
                             ),
-                            softWrap: true,
-                          ),
-                        ],
-                      ),
-                    ],
-                  )),
-                ],
-              ),
-            ],
-          ),
-          CarouselSlider.builder(
-            itemCount: imgList.length,
-            options: CarouselOptions(
-                viewportFraction: 1.0,
-                enlargeCenterPage: false,
-                autoPlay: false,
-                onPageChanged: (index, reason) {
-                  // setState(() {
-                  //   currentPos = index;
-                  // });
-                }),
-            itemBuilder: (context, index, realIndex) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15.0),
-                  child: Image.asset(
-                    'assets/imgs/carousel.jpg',
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.width / 2.5,
-                    fit: BoxFit.fill,
-                  ),
+                          ],
+                        ),
+                      ],
+                    )),
+                  ],
                 ),
-              );
-            },
-          ),
-          const SizedBox(height: 18.0),
-          const Text(
-            'Categories',
-            textAlign: TextAlign.start,
-            style: TextStyle(
-              fontFamily: 'Nunito-Medium',
-              fontSize: 20.0,
-              color: Color(0xFF313131),
-              fontWeight: FontWeight.bold,
+              ],
             ),
-          ),
-          const SizedBox(height: 14.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Column(
-                children: [
-                  Container(
-                    width: 60,
-                    margin: const EdgeInsets.only(
-                        bottom: 10.0, right: 30.0, left: 30.0),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFCFCFC),
-                      borderRadius: BorderRadius.circular(10.0),
-                      border: Border.all(
-                        color: const Color(0xFFAEAEAE),
-                      ),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        // if (globals.hasConnection == false) {
-                        //   globals.checkConnection(
-                        //     context,
-                        //     "Mohon cek kembali koneksi internet WiFi/Data anda",
-                        //     'Tidak ada koneksi',
-                        //     'assets/imgs/no-internet.json',
-                        //   );
-                        // } else {
-                        Navigator.pushNamed(context, '/ongkir');
-                        // }
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.only(
-                          top: 15.0,
-                          bottom: 15.0,
-                        ),
-                        child: Center(
-                            child: Icon(
-                          Icons.fact_check,
-                          size: 30.0,
-                          color: Color(0xFF5599E9),
-                        )),
-                      ),
+            CarouselSlider.builder(
+              itemCount: imgList.length,
+              options: CarouselOptions(
+                  viewportFraction: 1.0,
+                  enlargeCenterPage: false,
+                  autoPlay: false,
+                  onPageChanged: (index, reason) {
+                    // setState(() {
+                    //   currentPos = index;
+                    // });
+                  }),
+              itemBuilder: (context, index, realIndex) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Image.asset(
+                      'assets/imgs/carousel.jpg',
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.width / 2.5,
+                      fit: BoxFit.fill,
                     ),
                   ),
-                  const Center(
-                    child: Text("Cek Ongkir",
-                        style: TextStyle(
-                            fontSize: 14.0, color: Color(0xFF313131))),
-                  )
-                ],
+                );
+              },
+            ),
+            const SizedBox(height: 18.0),
+            const Text(
+              'Categories',
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontFamily: 'Nunito-Medium',
+                fontSize: 20.0,
+                color: Color(0xFF313131),
+                fontWeight: FontWeight.bold,
               ),
-              Column(
-                children: [
-                  Container(
-                    width: 60,
-                    margin: const EdgeInsets.only(
-                        bottom: 10.0, right: 30.0, left: 30.0),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFCFCFC),
-                      borderRadius: BorderRadius.circular(10.0),
-                      border: Border.all(
-                        color: const Color(0xFFAEAEAE),
-                      ),
-                    ),
-                    child: InkWell(
-                      onTap: () async {
-                        // if (globals.hasConnection == false) {
-                        //   globals.checkConnection(
-                        //     context,
-                        //     "Mohon cek kembali koneksi internet WiFi/Data anda",
-                        //     'Tidak ada koneksi',
-                        //     'assets/imgs/no-internet.json',
-                        //   );
-                        // } else {
-                        //   if (globals.loggedIn == false) {
-                        //     Dialogs.materialDialog(
-                        //       color: Colors.white,
-                        //       msg:
-                        //           "Anda belum menyelesaikan status verifikasi anda/belum login",
-                        //       title: 'Orderan',
-                        //       lottieBuilder: Lottie.asset(
-                        //         'assets/imgs/updated-transaction.json',
-                        //         fit: BoxFit.contain,
-                        //       ),
-                        //       context: context,
-                        //       actions: [
-                        //         IconsButton(
-                        //           onPressed: () async {
-                        //             await Navigator.pop(context);
-                        //             Navigator.pushNamed(context, '/login');
-                        //           },
-                        //           text: 'Login Sekarang',
-                        //           iconData: Icons.account_box_outlined,
-                        //           color: Colors.blue,
-                        //           textStyle: TextStyle(
-                        //               color: Colors.white, fontSize: 12),
-                        //           iconColor: Colors.white,
-                        //         ),
-                        //         IconsButton(
-                        //           onPressed: () {
-                        //             Navigator.pop(context);
-                        //           },
-                        //           text: 'Nanti Saja',
-                        //           iconData: Icons.done,
-                        //           color: Colors.white,
-                        //           textStyle:
-                        //               TextStyle(color: Color(0xFF313131)),
-                        //           iconColor: Color(0xFF313131),
-                        //         ),
-                        //       ],
-                        //     );
-                        //   } else if (globals.verificationStatus == "12" ||
-                        //       globals.verificationStatus == "14" ||
-                        //       globals.verificationStatus == "0") {
-                        //     Dialogs.materialDialog(
-                        //       color: Colors.white,
-                        //       msg:
-                        //           "Anda belum menyelesaikan status verifikasi anda/belum login",
-                        //       title: 'Orderan',
-                        //       lottieBuilder: Lottie.asset(
-                        //         'assets/imgs/updated-transaction.json',
-                        //         fit: BoxFit.contain,
-                        //       ),
-                        //       context: context,
-                        //       actions: [
-                        //         if (globals.verificationStatus == "14" ||
-                        //             globals.verificationStatus == "0") ...[
-                        //           IconsButton(
-                        //             onPressed: () async {
-                        //               if (globals.verificationStatus == "14") {
-                        //                 await Navigator.pop(context);
-                        //                 Navigator.push(
-                        //                     context,
-                        //                     MaterialPageRoute(
-                        //                         builder: (context) =>
-                        //                             DataVerifikasi(
-                        //                               npwpPath: widget
-                        //                                   .selectednpwpPath,
-                        //                               ktpPath: widget
-                        //                                   .selectedktpPath,
-                        //                               nik: widget.selectednik,
-                        //                               nama: widget.selectednama,
-                        //                               alamatdetail: widget
-                        //                                   .selectedalamatdetail,
-                        //                               tglLahir: widget
-                        //                                   .selectedtglLahir,
-                        //                               npwp: widget.selectednpwp,
-                        //                               isEdit: true,
-                        //                             )));
-                        //               } else if (globals.verificationStatus ==
-                        //                   "0") {
-                        //                 await Navigator.pop(context);
-                        //                 Navigator.pushNamed(
-                        //                     context, '/homeverifikasi');
-                        //               }
-                        //             },
-                        //             text: 'Verifikasi User',
-                        //             iconData: Icons.account_box_outlined,
-                        //             color: Colors.blue,
-                        //             textStyle: TextStyle(
-                        //                 color: Colors.white, fontSize: 13),
-                        //             iconColor: Colors.white,
-                        //           ),
-                        //         ],
-                        //         IconsButton(
-                        //           onPressed: () {
-                        //             Navigator.pop(context);
-                        //           },
-                        //           text: 'Nanti Saja',
-                        //           iconData: Icons.done,
-                        //           color: Color.fromARGB(255, 206, 206, 206),
-                        //           textStyle:
-                        //               TextStyle(color: Color(0xFF313131)),
-                        //           iconColor: Color(0xFF313131),
-                        //         ),
-                        //       ],
-                        //     );
-                        //     //   Navigator.pushNamed(context, '/login');
-                        //   } else if (await checkOrderan(globals.loggedinId) ==
-                        //       true) {
-                        //     globals.alertBerhasilPesan(
-                        //       context,
-                        //       "Mohon selesaikan orderan awal terlebih dahulu agar dapat melanjutkan pemesanan kembali.",
-                        //       'Orderan masih belum selesai',
-                        //       'assets/imgs/shipping-truck.json',
-                        //     );
-                        //   } else {
-                        //     Navigator.pushNamed(context, '/order');
-                        //   }
-                        // }
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.only(
-                          top: 15.0,
-                          bottom: 15.0,
+            ),
+            const SizedBox(height: 14.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Column(
+                  children: [
+                    Container(
+                      width: 60,
+                      margin: const EdgeInsets.only(
+                          bottom: 10.0, right: 30.0, left: 30.0),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFCFCFC),
+                        borderRadius: BorderRadius.circular(10.0),
+                        border: Border.all(
+                          color: const Color(0xFFAEAEAE),
                         ),
-                        child: Center(
-                            child: Icon(
-                          Icons.local_shipping,
-                          size: 30.0,
-                          color: Color(0xFF5599E9),
-                        )),
                       ),
-                    ),
-                  ),
-                  const Center(
-                    child: Text("Pesanan",
-                        style: TextStyle(
-                            fontSize: 14.0, color: Color(0xFF313131))),
-                  )
-                ],
-              ),
-              Column(
-                children: [
-                  Container(
-                    width: 60,
-                    margin: const EdgeInsets.only(
-                        bottom: 10.0, right: 30.0, left: 30.0),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFCFCFC),
-                      borderRadius: BorderRadius.circular(10.0),
-                      border: Border.all(
-                        color: const Color(0xFFAEAEAE),
-                      ),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        // if (globals.hasConnection == false) {
-                        //   globals.checkConnection(
-                        //     context,
-                        //     "Mohon cek kembali koneksi internet WiFi/Data anda",
-                        //     'Tidak ada koneksi',
-                        //     'assets/imgs/no-internet.json',
-                        //   );
-                        // } else {
-                        //   if (globals.loggedIn == false) {
-                        //     Dialogs.materialDialog(
-                        //       color: Colors.white,
-                        //       msg:
-                        //           "Anda belum menyelesaikan status verifikasi anda/belum login",
-                        //       title: 'Orderan',
-                        //       lottieBuilder: Lottie.asset(
-                        //         'assets/imgs/updated-transaction.json',
-                        //         fit: BoxFit.contain,
-                        //       ),
-                        //       context: context,
-                        //       actions: [
-                        //         IconsButton(
-                        //           onPressed: () async {
-                        //             await Navigator.pop(context);
-                        //             Navigator.pushNamed(context, '/login');
-                        //           },
-                        //           text: 'Login Sekarang',
-                        //           iconData: Icons.account_box_outlined,
-                        //           color: Colors.blue,
-                        //           textStyle: TextStyle(
-                        //               color: Colors.white, fontSize: 12),
-                        //           iconColor: Colors.white,
-                        //         ),
-                        //         IconsButton(
-                        //           onPressed: () {
-                        //             Navigator.pop(context);
-                        //           },
-                        //           text: 'Nanti Saja',
-                        //           iconData: Icons.done,
-                        //           color: Colors.white,
-                        //           textStyle:
-                        //               TextStyle(color: Color(0xFF313131)),
-                        //           iconColor: Color(0xFF313131),
-                        //         ),
-                        //       ],
-                        //     );
-                        //   } else {
-                        //     Navigator.pushNamed(context, '/list_pesanan');
-                        //   }
-                        // }
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.only(
-                          top: 15.0,
-                          bottom: 15.0,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/ongkir');
+                          // if (globals.hasConnection == false) {
+                          //   globals.checkConnection(
+                          //     context,
+                          //     "Mohon cek kembali koneksi internet WiFi/Data anda",
+                          //     'Tidak ada koneksi',
+                          //     'assets/imgs/no-internet.json',
+                          //   );
+                          // } else {
+                          // }
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.only(
+                            top: 15.0,
+                            bottom: 15.0,
+                          ),
+                          child: Center(
+                              child: Icon(
+                            Icons.fact_check,
+                            size: 30.0,
+                            color: Color(0xFF5599E9),
+                          )),
                         ),
-                        child: Center(
-                            child: Icon(
-                          Icons.list,
-                          size: 30.0,
-                          color: Color(0xFF5599E9),
-                        )),
                       ),
                     ),
-                  ),
-                  const Center(
-                    child: Text("List Pesanan",
-                        style: TextStyle(
-                            fontSize: 14.0, color: Color(0xFF313131))),
-                  )
-                ],
-              ),
-            ],
-          ),
-        ],
+                    const Center(
+                      child: Text("Cek Ongkir",
+                          style: TextStyle(
+                              fontSize: 14.0, color: Color(0xFF313131))),
+                    )
+                  ],
+                ),
+                BlocConsumer<ValidasiBloc, ValidasiState>(
+                  listener: (context, state) {
+                    if (state is ValidasiSuccess) {
+                      Future.delayed(const Duration(seconds: 0), () {
+                        components.dia!.hide();
+                        Navigator.pushNamed(context, '/order');
+                      });
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is ValidasiLoading) {
+                      print("baca loading");
+                      Future.delayed(const Duration(seconds: 1), () {
+                        components.showDia();
+                      });
+                    }
+                    // if (state is ValidasiFailed) {
+                    //   Future.delayed(const Duration(seconds: 0), () {
+                    //     components.dia!.hide();
+                    //     components.alertBerhasilPesan(
+                    //       state.message!,
+                    //       state.content!,
+                    //       state.image!,
+                    //       IconsButton(
+                    //         onPressed: () async {
+                    //           Navigator.pop(context);
+                    //         },
+                    //         text: 'Ok',
+                    //         iconData: Icons.done,
+                    //         color: Colors.blue,
+                    //         textStyle: const TextStyle(color: Colors.white),
+                    //         iconColor: Colors.white,
+                    //       ),
+                    //     );
+                    //   });
+                    // }
+                    return Column(
+                      children: [
+                        Container(
+                          width: 60,
+                          margin: const EdgeInsets.only(
+                              bottom: 10.0, right: 30.0, left: 30.0),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFCFCFC),
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(
+                              color: const Color(0xFFAEAEAE),
+                            ),
+                          ),
+                          child: InkWell(
+                            onTap: () async {
+                              BlocProvider.of<ValidasiBloc>(context)
+                                  .add(PesananValidasiEvent());
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.only(
+                                top: 15.0,
+                                bottom: 15.0,
+                              ),
+                              child: Center(
+                                  child: Icon(
+                                Icons.local_shipping,
+                                size: 30.0,
+                                color: Color(0xFF5599E9),
+                              )),
+                            ),
+                          ),
+                        ),
+                        const Center(
+                          child: Text("Pesanan",
+                              style: TextStyle(
+                                  fontSize: 14.0, color: Color(0xFF313131))),
+                        )
+                      ],
+                    );
+                  },
+                ),
+                BlocConsumer<ValidasiBloc, ValidasiState>(
+                  listener: (context, state) {
+                    if (state is HistorySuccecss) {
+                      Future.delayed(const Duration(seconds: 0), () {
+                        components.dia!.hide();
+                        print("berhasil");
+                      });
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is HistoryLoading) {
+                      Future.delayed(const Duration(seconds: 0), () {
+                        components.showDia();
+                      });
+                    } else if (state is HistoryFailed) {
+                      Future.delayed(const Duration(seconds: 0), () {
+                        components.dia!.hide();
+                        components.alertBerhasilPesan(
+                          state.message!,
+                          state.content!,
+                          state.image!,
+                          IconsButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                            },
+                            text: 'Ok',
+                            iconData: Icons.done,
+                            color: Colors.blue,
+                            textStyle: const TextStyle(color: Colors.white),
+                            iconColor: Colors.white,
+                          ),
+                        );
+                      });
+                    }
+                    return Column(
+                      children: [
+                        Container(
+                          width: 60,
+                          margin: const EdgeInsets.only(
+                              bottom: 10.0, right: 30.0, left: 30.0),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFCFCFC),
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(
+                              color: const Color(0xFFAEAEAE),
+                            ),
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              context
+                                  .read<ValidasiBloc>()
+                                  .add(HistoryValidasiEvent());
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.only(
+                                top: 15.0,
+                                bottom: 15.0,
+                              ),
+                              child: Center(
+                                  child: Icon(
+                                Icons.list,
+                                size: 30.0,
+                                color: Color(0xFF5599E9),
+                              )),
+                            ),
+                          ),
+                        ),
+                        const Center(
+                          child: Text("List Pesanan",
+                              style: TextStyle(
+                                  fontSize: 14.0, color: Color(0xFF313131))),
+                        )
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -719,29 +630,12 @@ class _DashboardState extends State<Dashboard> {
 }
 
 class Profiles extends StatefulWidget {
-  // final File selectednpwpPath;
-  // final File selectedktpPath;
-  // final String selectednik;
-  // final String selectedalamatdetail;
-  // final String selectednama;
-  // final String selectedtglLahir;
-  // final String selectednpwp;
-  // final int selecteduserid;
-
   const Profiles({
     Key? key,
-    // this.selectednpwpPath,
-    // this.selectedktpPath,
-    // this.selectednik,
-    // this.selectedalamatdetail,
-    // this.selectednama,
-    // this.selectedtglLahir,
-    // this.selectednpwp,
-    // this.selecteduserid,
   }) : super(key: key);
 
   @override
-  _ProfilesState createState() => _ProfilesState();
+  State<Profiles> createState() => _ProfilesState();
 }
 
 class _ProfilesState extends State<Profiles>
@@ -763,8 +657,10 @@ class _ProfilesState extends State<Profiles>
     super.initState();
   }
 
-  var height, width;
+  double? height;
+  double? width;
 
+  @override
   Widget build(BuildContext context) {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
@@ -810,11 +706,11 @@ class _ProfilesState extends State<Profiles>
       children: <Widget>[
         Container(
           height: 250,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               color: Color(
             0xFFF1F1EF,
           )),
-          child: Column(
+          child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Row(
@@ -854,13 +750,13 @@ class _ProfilesState extends State<Profiles>
         ),
         TabBar(
           controller: tabController,
-          indicatorColor: Color(0xFF5599E9),
-          labelColor: Color(0xFF5599E9),
+          indicatorColor: const Color(0xFF5599E9),
+          labelColor: const Color(0xFF5599E9),
           splashFactory: NoSplash.splashFactory,
-          unselectedLabelColor: Color(0xFF313131),
-          tabs: [
+          unselectedLabelColor: const Color(0xFF313131),
+          tabs: const [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(8.0),
               child: Text(
                 "Data User",
                 style: TextStyle(
@@ -870,83 +766,81 @@ class _ProfilesState extends State<Profiles>
             ),
           ],
         ),
-        Container(
-          child: Column(
-            children: <Widget>[
-              ListTile(
-                title: Text(
-                  'Name',
-                  style: TextStyle(
-                    color: Color(0xFF777777),
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                subtitle: Text(
-                  'USER',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF313131),
-                  ),
+        const Column(
+          children: <Widget>[
+            ListTile(
+              title: Text(
+                'Name',
+                style: TextStyle(
+                  color: Color(0xFF777777),
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              Divider(
-                color: Color(0xFF999999),
-                thickness: 2.0,
-                indent: 15.0,
-                endIndent: 15.0,
-              ),
-              ListTile(
-                title: Text(
-                  'Tanggal Lahir',
-                  style: TextStyle(
-                    color: Color(0xFF777777),
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                subtitle: Text(
-                  'XX-XX-XXXX',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF313131),
-                  ),
+              subtitle: Text(
+                'USER',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF313131),
                 ),
               ),
-              Divider(
-                color: Color(0xFF999999),
-                thickness: 2.0,
-                indent: 15.0,
-                endIndent: 15.0,
-              ),
-              ListTile(
-                title: Text(
-                  'No. Telp',
-                  style: TextStyle(
-                    color: Color(0xFF777777),
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                subtitle: Text(
-                  'XXXX-XXXX-XXXX',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF313131),
-                  ),
+            ),
+            Divider(
+              color: Color(0xFF999999),
+              thickness: 2.0,
+              indent: 15.0,
+              endIndent: 15.0,
+            ),
+            ListTile(
+              title: Text(
+                'Tanggal Lahir',
+                style: TextStyle(
+                  color: Color(0xFF777777),
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              Divider(
-                color: Color(0xFF999999),
-                thickness: 2.0,
-                indent: 15.0,
-                endIndent: 15.0,
+              subtitle: Text(
+                'XX-XX-XXXX',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF313131),
+                ),
               ),
-            ],
-          ),
+            ),
+            Divider(
+              color: Color(0xFF999999),
+              thickness: 2.0,
+              indent: 15.0,
+              endIndent: 15.0,
+            ),
+            ListTile(
+              title: Text(
+                'No. Telp',
+                style: TextStyle(
+                  color: Color(0xFF777777),
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: Text(
+                'XXXX-XXXX-XXXX',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF313131),
+                ),
+              ),
+            ),
+            Divider(
+              color: Color(0xFF999999),
+              thickness: 2.0,
+              indent: 15.0,
+              endIndent: 15.0,
+            ),
+          ],
         )
       ],
     );
@@ -1424,7 +1318,7 @@ class Settings extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _SettingsState createState() => _SettingsState();
+  State<Settings> createState() => _SettingsState();
 }
 
 class _SettingsState extends State<Settings> {
@@ -1440,7 +1334,9 @@ class _SettingsState extends State<Settings> {
     super.dispose();
   }
 
-  var size, height, width;
+  Size? size;
+  double? height;
+  double? width;
 
   final components = Tools();
 
@@ -1449,8 +1345,8 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    height = size.height;
-    width = size.width;
+    height = size!.height;
+    width = size!.width;
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
@@ -1587,13 +1483,12 @@ class _SettingsState extends State<Settings> {
                     IconsButton(
                       onPressed: () async {
                         sessionManager.signout();
-                        components.showDia(context,
-                            SimpleFontelicoProgressDialogType.normal, 'Normal');
+                        components.showDia();
                         // globals.pusher.disconnect();
                         Future.delayed(const Duration(seconds: 3), () {
                           components.dia!.hide();
                           Navigator.pushNamedAndRemoveUntil(
-                              context, '/login', (route) => false);
+                              context, '/home', (route) => false);
                         });
                       },
                       text: 'Logout',

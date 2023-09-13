@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 class ApiClient {
   final Dio _dio = Dio();
+  final String apiKey = "AIzaSyAT4gmz3D3ZVc7ZicmM33XtG3yTkkeJ9GU";
 
   ApiClient() {
     _dio.options.baseUrl = 'https://web.transporindo.com/';

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tasorderan/core/api_client.dart';
@@ -90,9 +89,12 @@ class AuthRepository extends ApiClient {
     Directory tempDir = await getApplicationDocumentsDirectory();
     String tempPath = tempDir.path;
     File npwpFile = File('$tempPath${rng.nextInt(100)}.jpg');
-    final response = await http.get(Uri.parse(
-        'https://web.transporindo.com/orderemkl-api/public/api/user/image/npwp/$npwp'));
-    await npwpFile.writeAsBytes(response.bodyBytes);
+    final response = await dio.get(
+        'https://web.transporindo.com/orderemkl-api/public/api/user/image/npwp/$npwp',
+        options: Options(
+          responseType: ResponseType.bytes,
+        ));
+    await npwpFile.writeAsBytes(response.data);
     return npwpFile;
   }
 }
