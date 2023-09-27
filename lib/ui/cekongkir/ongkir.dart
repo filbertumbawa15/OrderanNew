@@ -5,29 +5,24 @@ import 'dart:convert';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_dialogs/widgets/buttons/icon_button.dart';
-import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:tasorderan/bloc/pesanan/ongkir/datapengirim/datapengirim_cubit.dart';
 import 'package:tasorderan/bloc/pesanan/ongkir/ongkir/ongkir_bloc.dart';
 import 'package:tasorderan/components/components.dart';
 import 'package:tasorderan/core/api_client.dart';
-import 'package:tasorderan/main.dart';
 import 'package:tasorderan/models/pesanan_models.dart';
 
 class Ongkir extends StatefulWidget {
+  const Ongkir({super.key});
+
   @override
-  _OngkirState createState() => _OngkirState();
+  State<Ongkir> createState() => _OngkirState();
 }
 
 class _OngkirState extends State<Ongkir> {
   Size? size;
   double? height, width;
-  SimpleFontelicoProgressDialog? _dialog;
-  //Data Asal
-  String? _selectedprovinsiasal;
-  String? _selectedkotaasal;
-  String? _selectedkecamatanasal;
-  String? _selectedkelurahanasal;
 
+  //Data Asal
   String? _placeidasal;
   String? _latitude_place_asal;
   String? _longitude_place_asal;
@@ -49,11 +44,6 @@ class _OngkirState extends State<Ongkir> {
   //Data Asal
 
   //Data Tujuan
-  String? _selectedprovinsitujuan;
-  String? _selectedkotatujuan;
-  String? _selectedkecamatantujuan;
-  String? _selectedkelurahantujuan;
-
   String? _placeidtujuan;
   String? _latitude_place_tujuan;
   String? _longitude_place_tujuan;
@@ -78,269 +68,10 @@ class _OngkirState extends State<Ongkir> {
   int? _container_id;
   final _selectednilaibarang = TextEditingController();
   final _selectedqty = TextEditingController(text: '1');
-
   ValueNotifier<bool>? _isButtonDisabled;
-
   final components = Tools();
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey();
 
-//   void updateDataAsal(Object information_asal) async {
-//     setState(() {
-//       _placeidasal =
-//           jsonDecode(jsonEncode(information_asal))['_placeidasal'].toString();
-//       _latitude_place_asal =
-//           jsonDecode(jsonEncode(information_asal))['_latitude_place_asal']
-//               .toString();
-//       _longitude_place_asal =
-//           jsonDecode(jsonEncode(information_asal))['_longitude_place_asal']
-//               .toString();
-//       _pelabuhanidasal =
-//           jsonDecode(jsonEncode(information_asal))['_pelabuhanidasal']
-//               .toString();
-//       _latitude_pelabuhan_asal =
-//           jsonDecode(jsonEncode(information_asal))['_latitude_pelabuhan_asal']
-//               .toString();
-//       _longitude_pelabuhan_asal =
-//           jsonDecode(jsonEncode(information_asal))['_longitude_pelabuhan_asal']
-//               .toString();
-//       _jarak_asal =
-//           jsonDecode(jsonEncode(information_asal))['_jarak_asal'].toString();
-//       _waktu_asal =
-//           jsonDecode(jsonEncode(information_asal))['_waktu_asal'].toString();
-//       _alamatasal.text =
-//           jsonDecode(jsonEncode(information_asal))['_alamatasal'].toString();
-//       alamatpengirim =
-//           jsonDecode(jsonEncode(information_asal))['alamatpengirim'].toString();
-//       _nama_pelabuhan_asal =
-//           jsonDecode(jsonEncode(information_asal))['_nama_pelabuhan_asal']
-//               .toString();
-// //
-
-//       _selectedprovinsiasal =
-//           jsonDecode(jsonEncode(information_asal))['_selectedprovinsiasal']
-//               .toString();
-//       _selectedkotaasal =
-//           jsonDecode(jsonEncode(information_asal))['_selectedkotaasal']
-//               .toString();
-//       _selectedkecamatanasal =
-//           jsonDecode(jsonEncode(information_asal))['_selectedkecamatanasal']
-//               .toString();
-//       _selectedkelurahanasal =
-//           jsonDecode(jsonEncode(information_asal))['_selectedkelurahanasal']
-//               .toString();
-//       notelppengirim =
-//           jsonDecode(jsonEncode(information_asal))['notelppengirim'].toString();
-//       pengirim =
-//           jsonDecode(jsonEncode(information_asal))['pengirim'].toString();
-//     });
-//     if (_selectednilaibarang.text.isNotEmpty &&
-//         _container_id != null &&
-//         _selectedqty.text.isNotEmpty &&
-//         _placeidasal != null &&
-//         _placeidtujuan != null) {
-//       _isButtonDisabled!.value = false;
-//     } else {
-//       _isButtonDisabled!.value = true;
-//     }
-//   }
-
-  void updateDataTujuan(Object information_tujuan) async {
-    setState(() {
-      _placeidtujuan =
-          jsonDecode(jsonEncode(information_tujuan))['_placeidtujuan']
-              .toString();
-      _latitude_place_tujuan =
-          jsonDecode(jsonEncode(information_tujuan))['_latitude_place_tujuan']
-              .toString();
-      _longitude_place_tujuan =
-          jsonDecode(jsonEncode(information_tujuan))['_longitude_place_tujuan']
-              .toString();
-      _pelabuhanidtujuan =
-          jsonDecode(jsonEncode(information_tujuan))['_pelabuhanidtujuan']
-              .toString();
-      _latitude_pelabuhan_tujuan = jsonDecode(
-              jsonEncode(information_tujuan))['_latitude_pelabuhan_tujuan']
-          .toString();
-      _longitude_pelabuhan_tujuan = jsonDecode(
-              jsonEncode(information_tujuan))['_longitude_pelabuhan_tujuan']
-          .toString();
-      _jarak_tujuan =
-          jsonDecode(jsonEncode(information_tujuan))['_jarak_tujuan']
-              .toString();
-      _waktu_tujuan =
-          jsonDecode(jsonEncode(information_tujuan))['_waktu_tujuan']
-              .toString();
-      _alamattujuan.text =
-          jsonDecode(jsonEncode(information_tujuan))['_alamattujuan']
-              .toString();
-      alamatpengirim =
-          jsonDecode(jsonEncode(information_tujuan))['alamatpengirim']
-              .toString();
-//
-
-      _selectedprovinsitujuan =
-          jsonDecode(jsonEncode(information_tujuan))['_selectedprovinsitujuan']
-              .toString();
-      _selectedkotatujuan =
-          jsonDecode(jsonEncode(information_tujuan))['_selectedkotatujuan']
-              .toString();
-      _selectedkecamatantujuan =
-          jsonDecode(jsonEncode(information_tujuan))['_selectedkecamatantujuan']
-              .toString();
-      _selectedkelurahantujuan =
-          jsonDecode(jsonEncode(information_tujuan))['_selectedkelurahantujuan']
-              .toString();
-      notelppengirim =
-          jsonDecode(jsonEncode(information_tujuan))['notelppengirim']
-              .toString();
-      pengirim =
-          jsonDecode(jsonEncode(information_tujuan))['pengirim'].toString();
-    });
-    if (_selectednilaibarang.text.isNotEmpty &&
-        _container_id != null &&
-        _selectedqty.text.isNotEmpty &&
-        _placeidasal != null &&
-        _placeidtujuan != null) {
-      _isButtonDisabled!.value = false;
-    } else {
-      _isButtonDisabled!.value = true;
-    }
-  }
-
-  // void MoveAsal() async {
-  //   // final information_asal = await Navigator.push(
-  //   //   context,
-  //   //   CupertinoPageRoute(
-  //   //       fullscreenDialog: true, builder: (context) => Asal_Ongkir()),
-  //   // );
-  //   final information_asal = await Navigator.pushNamed(context, '/asal_ongkir');
-  //   updateDataAsal(information_asal);
-  // }
-
-  // void EditAsal() async {
-  //   final information_asal = await Navigator.push(
-  //     context,
-  //     CupertinoPageRoute(
-  //         fullscreenDialog: true,
-  //         builder: (context) => Asal_Ongkir(
-  //               selectedplaceidasal: _placeidasal,
-  //               selectedlatitudeplaceasal: _latitude_place_asal,
-  //               selectedlongitudeplaceasal: _longitude_place_asal,
-  //               selectedpelabuhanidasal: _pelabuhanidasal,
-  //               selectedalamatasal: _alamatasal.text,
-  //               selectednamapelabuhan: _nama_pelabuhan_asal,
-  //             )),
-  //   );
-  //   updateDataAsal(information_asal);
-  // }
-
-  // void MoveTujuan() async {
-  //   // final information_tujuan = await Navigator.push(
-  //   //   context,
-  //   //   CupertinoPageRoute(
-  //   //       fullscreenDialog: true, builder: (context) => Tujuan_Ongkir()),
-  //   // );
-  //   final information_tujuan =
-  //       await Navigator.pushNamed(context, '/tujuan_ongkir');
-  //   updateDataTujuan(information_tujuan);
-  // }
-
-  // void EditTujuan() async {
-  //   final information_tujuan = await Navigator.push(
-  //     context,
-  //     CupertinoPageRoute(
-  //         fullscreenDialog: true,
-  //         builder: (context) => Tujuan_Ongkir(
-  //               selectedplaceidtujuan: _placeidtujuan,
-  //               selectedlatitudeplacetujuan: _latitude_place_tujuan,
-  //               selectedlongitudeplacetujuan: _longitude_place_tujuan,
-  //               selectedpelabuhanidtujuan: _pelabuhanidtujuan,
-  //               selectedalamattujuan: _alamattujuan.text,
-  //               selectednamapelabuhan: _nama_pelabuhan_asal,
-  //             )),
-  //   );
-  //   updateDataTujuan(information_tujuan);
-  // }
-
-  // void ConfirmOrder(
-  //   var _placeidasal,
-  //   var _pelabuhanidasal,
-  //   var _latitude_pelabuhan_asal,
-  //   var _longitude_pelabuhan_asal,
-  //   var _jarak_asal,
-  //   var _waktu_asal,
-  //   var _alamatasal,
-  //   var _placeidtujuan,
-  //   var _pelabuhanidtujuan,
-  //   var _latitude_pelabuhan_tujuan,
-  //   var _longitude_pelabuhan_tujuan,
-  //   var _jarak_tujuan,
-  //   var _waktu_tujuan,
-  //   var _alamattujuan,
-  //   int _container_id,
-  //   String nilaibarang,
-  //   String qty,
-  // ) async {
-  //   final nilaibarang_asuransi =
-  //       int.parse(nilaibarang.substring(4).replaceAll('.', '')).toString();
-  //   var data = {
-  //     "placeidasal": _placeidasal,
-  //     "pelabuhanidasal": _pelabuhanidasal,
-  //     "latitude_pelabuhan_asal": _latitude_pelabuhan_asal,
-  //     "longitude_pelabuhan_asal": _longitude_pelabuhan_asal,
-  //     "jarak_asal": _jarak_asal,
-  //     "waktu_asal": _waktu_asal,
-  //     "placeidtujuan": _placeidtujuan,
-  //     "pelabuhanidtujuan": _pelabuhanidtujuan,
-  //     "latitude_pelabuhan_tujuan": _latitude_pelabuhan_tujuan,
-  //     "longitude_pelabuhan_tujuan": _longitude_pelabuhan_tujuan,
-  //     "jarak_tujuan": _jarak_tujuan,
-  //     "waktu_tujuan": _waktu_tujuan,
-  //     "container_id": _container_id,
-  //     "nilaibarang_asuransi": nilaibarang_asuransi,
-  //     "qty": qty,
-  //     "key": '${globals.apikey}',
-  //   };
-  //   var encode = jsonEncode(data);
-  //   print(encode);
-  //   final response = await http.get(
-  //     Uri.parse(
-  //         '${globals.url}/api-orderemkl/public/api/pesanan/cekongkoskirim?data=$encode'),
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Accept': 'application/json',
-  //       'Authorization': 'Bearer ${globals.accessToken}',
-  //     },
-  //   );
-  //   final harga = jsonDecode(response.body)['harga'];
-  //   final harga_satuan = jsonDecode(response.body)['hargasatuan'];
-  //   await Future.delayed(Duration(seconds: 2));
-  //   _dialog.hide();
-  //   Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //           builder: (context) => Harga(
-  //                 origincontroller: _alamatasal,
-  //                 pelabuhanasal:
-  //                     '$_latitude_pelabuhan_asal,$_longitude_pelabuhan_asal',
-  //                 pelabuhanidasal: _pelabuhanidasal,
-  //                 jarakasal: _jarak_asal,
-  //                 waktuasal: _waktu_asal,
-  //                 destinationcontroller: _alamattujuan,
-  //                 pelabuhantujuan:
-  //                     '$_latitude_pelabuhan_tujuan,$_longitude_pelabuhan_tujuan',
-  //                 pelabuhanidtujuan: _pelabuhanidtujuan,
-  //                 container: _container_id,
-  //                 nilaibarang: _selectednilaibarang.text,
-  //                 jaraktujuan: _jarak_tujuan,
-  //                 waktutujuan: _waktu_tujuan,
-  //                 harga: harga,
-  //                 qty: qty,
-  //                 hargasatuan: harga_satuan,
-  //               )));
-  // }
-
-  // String test = ;
   @override
   void initState() {
     super.initState();
@@ -643,39 +374,8 @@ class _OngkirState extends State<Ongkir> {
                             contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
                             border: OutlineInputBorder(),
                           ),
-                          // onFind: (String filter) async {
-                          //   var response = await Dio().get(
-                          //     "${globals.url}/api-orderemkl/public/api/container/combokodecontainer",
-                          //     options: Options(
-                          //       headers: {
-                          //         'Accept': 'application/json',
-                          //         'Content-type': 'application/json',
-                          //         'Authorization':
-                          //             'Bearer ${globals.accessToken}',
-                          //       },
-                          //     ),
-                          //   );
-                          //   var models = MasterContainer.fromJsonList(
-                          //       response.data['data']);
-                          //   return models;
-                          // },
                           onChanged: (data) {
-                            print(data);
-                            // // print(data);
                             _container_id = data!.id;
-                            // if (_placeidasal != null &&
-                            //     _placeidtujuan != null &&
-                            //     _container_id != null &&
-                            //     _selectednilaibarang.text.isNotEmpty &&
-                            //     _selectedqty.text.isNotEmpty) {
-                            //   setState(() {
-                            //     _isButtonDisabled = false;
-                            //   });
-                            // } else {
-                            //   setState(() {
-                            //     _isButtonDisabled = true;
-                            //   });
-                            // }
                           },
                           popupTitle: Container(
                             height: 50,

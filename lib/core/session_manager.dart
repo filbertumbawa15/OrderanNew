@@ -4,19 +4,19 @@ class SessionManager {
   final Box box = Hive.box('session');
 
   void setSession(
-    String name,
-    String user,
-    String telp,
-    int id,
-    String verification,
-    String email,
-    String password,
-    String token,
-    String ktpPath,
-    String npwpPath,
-    String nik,
-    String npwp,
-    String tglLahir,
+    String? name,
+    String? user,
+    String? telp,
+    int? id,
+    String? verification,
+    String? email,
+    String? password,
+    String? token,
+    String? ktpPath,
+    String? npwpPath,
+    String? nik,
+    String? npwp,
+    String? tglLahir,
   ) {
     box.put(AppKey.nameKey, name);
     box.put(AppKey.userKey, user);
@@ -69,7 +69,7 @@ class SessionManager {
         activeEmail != null &&
         activePasword != null &&
         activeToken != null &&
-        // activeKtpPath != null &&
+        activeKtpPath != null &&
         activeNpwpPath != null &&
         activeNik != null &&
         activeNpwp != null &&

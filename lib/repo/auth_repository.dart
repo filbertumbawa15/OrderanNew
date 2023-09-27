@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tasorderan/core/api_client.dart';
 import 'package:tasorderan/core/session_manager.dart';
@@ -96,5 +97,71 @@ class AuthRepository extends ApiClient {
         ));
     await npwpFile.writeAsBytes(response.data);
     return npwpFile;
+  }
+
+  Future<File> initializeFile(List<dynamic> imageBytes) async {
+    try {
+      Directory root = await getApplicationDocumentsDirectory();
+      String directoryPath = root.path;
+      File file =
+          await File('$directoryPath/${DateTime.now().millisecondsSinceEpoch}')
+              .create();
+      file.writeAsBytesSync(imageBytes.cast<int>());
+      return File(file.path);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<Map<String, dynamic>> verifikasiUser(VerifikasiUserParam param) async {
+    try {
+      String? ktpPath = param.ktp!.path.split('/').last;
+      String? npwpPath = param.npwp!.path.split('/').last;
+      FormData data = FormData.fromMap(
+        {
+          "foto_ktp":
+              await MultipartFile.fromFile(param.ktp!.path, filename: ktpPath),
+          "nik": param.nik,
+          "name": param.name,
+          "alamatdetail": param.alamatdetail,
+          "tgl_lahir": param.tgl_lahir,
+          "foto_npwp": await MultipartFile.fromFile(param.npwp!.path,
+              filename: npwpPath),
+          "no_npwp": param.no_npwp,
+          "user_id": param.user_id,
+        },
+      );
+      final response = await dio.post(
+        'orderemkl-api/public/api/user/upload_gambar',
+        data: data,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${sessionManager.getActiveToken()}',
+          },
+        ),
+      );
+      return response.data['statusverifikasi'];
+    } on DioError catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<Map<String, dynamic>> cekVerification(int id) async {
+    try {
+      final response = await dio.get(
+        'orderemkl-api/public/api/user/getdataverifikasi',
+        queryParameters: {
+          'id': id,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${sessionManager.getActiveToken()}',
+          },
+        ),
+      );
+      return response.data["data"];
+    } on DioError catch (e) {
+      throw Exception(e.toString());
+    }
   }
 }

@@ -1,97 +1,18 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_flutter_platform_interface/src/types/marker.dart'
-    as Marker;
 
 class Harga extends StatefulWidget {
   const Harga({
     Key? key,
   }) : super(key: key);
   @override
-  _HargaState createState() => _HargaState();
+  State<Harga> createState() => _HargaState();
 }
 
 class _HargaState extends State<Harga> {
-  Completer<GoogleMapController> _controller = Completer();
-  Set<Marker.Marker> _markers_origin = {};
-  Set<Polyline> _polylines = Set<Polyline>();
-
-  List<LatLng> polygonLatLngs = <LatLng>[];
-  int _polylineIdCounter = 1;
-
-  String distance = '0 km';
-  String duration = '0 day';
-
+  @override
   void initState() {
     super.initState();
-    // setMap();
   }
-
-  // void setMap(String origin, String destination) async {
-  //   var directions = await LocationService().getDirections(
-  //     origin,
-  //     destination,
-  //   );
-  //   _goToPlace(
-  //     directions['start_location']['lat'],
-  //     directions['start_location']['lng'],
-  //     directions['end_location']['lat'],
-  //     directions['end_location']['lng'],
-  //     directions['distance']['text'],
-  //     directions['duration']['text'],
-  //     directions['bounds_ne'],
-  //     directions['bounds_sw'],
-  //   );
-
-  //   _setPolyline(directions['polyline_decoded']);
-  // }
-
-  // void _setMarker(LatLng point, LatLng destination, String distance) {
-  //   setState(() {
-  //     _markers_origin.add(
-  //       Marker.Marker(
-  //         markerId: MarkerId('marker_origin'),
-  //         position: point,
-  //         // icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange)
-  //         infoWindow: InfoWindow(
-  //           title: "Distance: $distance",
-  //           snippet: "Duration: $duration",
-  //         ),
-  //       ),
-  //     );
-  //     _markers_origin.add(
-  //       Marker.Marker(
-  //         markerId: MarkerId('marker_destination'),
-  //         position: destination,
-  //         icon:
-  //             BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-  //         infoWindow: InfoWindow(
-  //           title: "Distance: $distance",
-  //           snippet: "Duration: $duration",
-  //         ),
-  //       ),
-  //     );
-  //   });
-  // }
-
-  // void _setPolyline(List<PointLatLng> points) {
-  //   final String polylineIdVal = 'polyline_$_polylineIdCounter';
-  //   _polylineIdCounter++;
-  //   _polylines.clear();
-  //   _polylines.add(
-  //     Polyline(
-  //       polylineId: PolylineId(polylineIdVal),
-  //       width: 5,
-  //       color: Colors.blue,
-  //       points: points
-  //           .map(
-  //             (point) => LatLng(point.latitude, point.longitude),
-  //           )
-  //           .toList(),
-  //     ),
-  //   );
-  // }
 
   //Parameter
   String? origincontroller;

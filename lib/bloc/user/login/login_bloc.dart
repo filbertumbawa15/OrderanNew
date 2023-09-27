@@ -31,7 +31,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         response.user!['name'],
         response.user!['user'],
         response.user!['telp'],
-        int.parse(response.user!['id']),
+        response.user!['id'],
         response.user!['statusverifikasi'],
         response.user!['email'],
         response.user!['name'],

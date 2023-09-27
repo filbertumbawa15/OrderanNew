@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:tasorderan/bloc/user/login/login_bloc.dart';
 import 'package:tasorderan/components/components.dart';
 
 class Login extends StatefulWidget {
-  SimpleFontelicoProgressDialog? _dialog;
+  const Login({super.key});
+
   @override
   State<Login> createState() => _LoginState();
 }

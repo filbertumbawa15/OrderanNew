@@ -1,3 +1,5 @@
+import 'dart:io';
+
 class RegisterUserParam {
   String? name;
   String? phone;
@@ -57,6 +59,41 @@ class LoginParam {
     return {
       "email": email,
       "password": password,
+    };
+  }
+}
+
+class VerifikasiUserParam {
+  File? ktp;
+  File? npwp;
+  String? nik;
+  String? name;
+  String? alamatdetail;
+  DateTime? tgl_lahir;
+  String? no_npwp;
+  int? user_id;
+
+  VerifikasiUserParam(
+    this.ktp,
+    this.npwp,
+    this.nik,
+    this.name,
+    this.alamatdetail,
+    this.tgl_lahir,
+    this.no_npwp,
+    this.user_id,
+  );
+
+  Map<String, dynamic> toJson() {
+    return {
+      "ktp": ktp,
+      "npwp": npwp,
+      "nik": nik,
+      "name": name,
+      "alamatdetail": alamatdetail,
+      "tgl_lahir": tgl_lahir,
+      "no_npwp": no_npwp,
+      "user_id": user_id,
     };
   }
 }

@@ -309,7 +309,7 @@ class _RegisterState extends State<Register> {
                                       .elementAt(0)[0];
                                   Future.delayed(const Duration(seconds: 0),
                                       () {
-                                    components.alert(context, value);
+                                    components.alert(value);
                                   });
                                 }
                                 return ValueListenableBuilder(

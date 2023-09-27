@@ -12,11 +12,9 @@ import 'package:tasorderan/core/app_setting/app_setting_bloc.dart';
 import 'package:tasorderan/core/session_manager.dart';
 
 class Home extends StatefulWidget {
-  final String? dataDitolak;
-
-  const Home({Key? key, this.dataDitolak}) : super(key: key);
+  const Home({Key? key}) : super(key: key);
   @override
-  _HomeState createState() => _HomeState();
+  State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
@@ -24,7 +22,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    // _setPrefs();
+    super.initState();
     _widgetOptions();
   }
 
@@ -35,77 +33,6 @@ class _HomeState extends State<Home> {
       const Settings(),
     ];
   }
-
-  // void editVerifikasi() async {
-  //   try {
-  //     final response = await http.get(
-  //         Uri.parse(
-  //             'http://web.transporindo.com/api-orderemkl/public/api/user/getdataverifikasi?id=${globals.loggedinId}'),
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Accept': 'application/json',
-  //           'Authorization': 'Bearer ${globals.accessToken}',
-  //         });
-  //     if (response.statusCode == 200) {
-  //       final result = jsonDecode(response.body);
-  //       await getnpwpImage(result['data']['foto_npwp']);
-  //       await getKtpImage(result['data']['foto_ktp']);
-  //       nik = result['data']['nik'];
-  //       nama = result['data']['name'];
-  //       alamatdetail = result['data']['alamatdetail'];
-  //       tglLahir = result['data']['tgl_lahir'];
-  //       npwp = result['data']['no_npwp'];
-  //       print("done");
-  //     } else {
-  //       print("
-  // ");
-  //       print(response.body);
-  //     }
-  //   } catch (e) {
-  //     print(e.toString());
-  //   }
-  // }
-
-  // Future<File> getnpwpImage(String npwp) async {
-  //   var rng = new Random();
-  //   Directory tempDir = await getTemporaryDirectory();
-  //   String tempPath = tempDir.path;
-  //   File file_npwp =
-  //       new File('$tempPath' + (rng.nextInt(100)).toString() + '.jpg');
-  //   http.Response response = await http.get(
-  //       Uri.parse(
-  //           '${globals.url}/api-orderemkl/public/api/user/image/npwp/$npwp'),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Accept': 'application/json',
-  //         'Authorization': 'Bearer ${globals.accessToken}',
-  //       });
-  //   await file_npwp.writeAsBytes(response.bodyBytes);
-  //   npwpPath = file_npwp;
-  // }
-
-  // Future<File> getKtpImage(String ktp) async {
-  //   var rng = new Random();
-  //   Directory tempDir = await getTemporaryDirectory();
-  //   String tempPath = tempDir.path;
-  //   File file_ktp =
-  //       new File('$tempPath' + (rng.nextInt(100)).toString() + '.jpg');
-  //   http.Response response = await http.get(
-  //       Uri.parse(
-  //           '${globals.url}/api-orderemkl/public/api/user/image/ktp/$ktp'),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Accept': 'application/json',
-  //         'Authorization': 'Bearer ${globals.accessToken}',
-  //       });
-  //   await file_ktp.writeAsBytes(response.bodyBytes);
-  //   ktpPath = file_ktp;
-  // }
-
-  // void getDataMaster() async {
-  //   await Provider.of<MasterProvider>(context, listen: false)
-  //       .callSkeletonListPesanan(context, globals.loggedinId);
-  // }
 
   void onItemTapped(int index) {
     setState(() {
@@ -118,103 +45,66 @@ class _HomeState extends State<Home> {
     });
   }
 
-  // void _setPrefs() async {
-  //   globals.prefs = await SharedPreferences.getInstance();
-  //   if (globals.prefs.getString('user') != null) {
-  //     globals.loggedIn = true;
-  //     globals.loggedinName =
-  //         jsonDecode(globals.prefs.getString('user'))['name'];
-  //     globals.loggedinEmail =
-  //         jsonDecode(globals.prefs.getString('user'))['email'];
-  //     globals.loggedinTelp =
-  //         jsonDecode(globals.prefs.getString('user'))['telp'];
-  //     globals.channel.bind("App\\Events\\UserVerified",
-  //         (PusherEvent event) async {
-  //       final result =
-  //           jsonDecode(jsonDecode(event.data)["message"])['verifikasiuser'];
-  //       if (result['id'] == globals.loggedinId) {
-  //         _showDialog(
-  //             context, SimpleFontelicoProgressDialogType.normal, 'Normal');
-  //         print(result);
-  //         await checkVerification(globals.loggedinEmail);
-  //         await editVerifikasi();
-  //         setState(() {
-  //           Future.delayed(const Duration(seconds: 3));
-  //           _dialog.hide();
-  //         });
-  //       }
-  //     });
-  //     if (globals.verificationStatus == "14") {
-  //       print(widget.dataDitolak);
-  //     }
-  //   } else {
-  //     globals.loggedinId = null;
-  //     globals.loggedIn = false;
-  //   }
-  //   // WidgetsBinding.instance.addPostFrameCallback((_) {
-  //   //   getDataMaster();
-  //   // });
-  // }
-
   @override
   Widget build(BuildContext context) {
-    // return WillPopScope(
-    // ignore: missing_return
-    // onWillPop: () async {
-    //   SystemNavigator.pop();
-    // },
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      extendBody: true,
-      // key: _scaffoldKey,
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: _widgetOptions().elementAt(selectedIndex),
-      ),
-      bottomNavigationBar: Theme(
-        data: ThemeData(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
+    return WillPopScope(
+      onWillPop: () async {
+        await SystemNavigator.pop();
+        return false;
+      },
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        extendBody: true,
+        // key: _scaffoldKey,
+        body: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: _widgetOptions().elementAt(selectedIndex),
         ),
-        child: Material(
-          elevation: 10,
-          child: BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Beranda',
-                tooltip: '',
-              ),
-              BottomNavigationBarItem(
-                icon: Stack(
-                  children: <Widget>[
-                    Icon(Icons.account_circle_sharp),
-                  ],
+        bottomNavigationBar: Theme(
+          data: ThemeData(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+          ),
+          child: Material(
+            elevation: 10,
+            child: BottomNavigationBar(
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Beranda',
+                  tooltip: '',
                 ),
-                label: "Profil",
-                tooltip: '',
+                BottomNavigationBarItem(
+                  icon: Stack(
+                    children: <Widget>[
+                      Icon(Icons.account_circle_sharp),
+                    ],
+                  ),
+                  label: "Profil",
+                  tooltip: '',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.settings),
+                  label: 'Pengaturan',
+                  tooltip: '',
+                ),
+              ],
+              currentIndex: selectedIndex,
+              selectedLabelStyle: const TextStyle(
+                fontFamily: 'Nunito-Medium',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
-                label: 'Pengaturan',
-                tooltip: '',
+              unselectedLabelStyle: const TextStyle(
+                fontFamily: 'Nunito-Medium',
+                fontSize: 14.0,
               ),
-            ],
-            currentIndex: selectedIndex,
-            selectedLabelStyle: const TextStyle(
-              fontFamily: 'Nunito-Medium',
+              fixedColor: const Color(0xFF5599E9),
+              onTap: onItemTapped,
             ),
-            unselectedLabelStyle: const TextStyle(
-              fontFamily: 'Nunito-Medium',
-              fontSize: 14.0,
-            ),
-            fixedColor: const Color(0xFF5599E9),
-            onTap: onItemTapped,
           ),
         ),
+        // ),
       ),
-      // ),
     );
   }
 }
@@ -249,32 +139,9 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
-    // globals.dateAus = DateTime.now().toUtc().toLocal();
   }
 
   final components = Tools();
-
-  // Future<bool> checkOrderan(var user_id) async {
-  //   var data = {"id": user_id};
-  //   var encode = jsonEncode(data);
-  //   final response = await http.get(
-  //       Uri.parse(
-  //           '${globals.url}/api-orderemkl/public/api/pesanan/validasiorderan?data=$encode'),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Accept': 'application/json',
-  //         'Authorization': 'Bearer ${globals.accessToken}',
-  //       });
-
-  //   return jsonDecode(response.body)['data'].length > 0;
-  // }
-
-  // List<Whatsapp> whatsapp = <Whatsapp>[
-  //   Whatsapp(name: 'Medan', notelp: '6281321232720'),
-  //   Whatsapp(name: 'Jakarta', notelp: '62895611340514'),
-  //   Whatsapp(name: 'Surabaya', notelp: '6285233534605'),
-  //   Whatsapp(name: 'Makassar', notelp: '6285233534605'),
-  // ];
 
   int currentPos = 0;
   final List<String> imgList = [
@@ -360,11 +227,7 @@ class _DashboardState extends State<Dashboard> {
                   viewportFraction: 1.0,
                   enlargeCenterPage: false,
                   autoPlay: false,
-                  onPageChanged: (index, reason) {
-                    // setState(() {
-                    //   currentPos = index;
-                    // });
-                  }),
+                  onPageChanged: (index, reason) {}),
               itemBuilder: (context, index, realIndex) {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -411,15 +274,6 @@ class _DashboardState extends State<Dashboard> {
                       child: InkWell(
                         onTap: () {
                           Navigator.pushNamed(context, '/ongkir');
-                          // if (globals.hasConnection == false) {
-                          //   globals.checkConnection(
-                          //     context,
-                          //     "Mohon cek kembali koneksi internet WiFi/Data anda",
-                          //     'Tidak ada koneksi',
-                          //     'assets/imgs/no-internet.json',
-                          //   );
-                          // } else {
-                          // }
                         },
                         child: const Padding(
                           padding: EdgeInsets.only(
@@ -446,7 +300,6 @@ class _DashboardState extends State<Dashboard> {
                   listener: (context, state) {
                     if (state is ValidasiSuccess) {
                       Future.delayed(const Duration(seconds: 0), () {
-                        components.dia!.hide();
                         Navigator.pushNamed(context, '/order');
                       });
                     }
@@ -454,30 +307,26 @@ class _DashboardState extends State<Dashboard> {
                   builder: (context, state) {
                     if (state is ValidasiLoading) {
                       print("baca loading");
-                      Future.delayed(const Duration(seconds: 1), () {
-                        components.showDia();
+                    }
+                    if (state is ValidasiFailed) {
+                      Future.delayed(const Duration(seconds: 0), () {
+                        components.alertBerhasilPesan(
+                          state.message!,
+                          state.content!,
+                          state.image!,
+                          IconsButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                            },
+                            text: 'Ok',
+                            iconData: Icons.done,
+                            color: Colors.blue,
+                            textStyle: const TextStyle(color: Colors.white),
+                            iconColor: Colors.white,
+                          ),
+                        );
                       });
                     }
-                    // if (state is ValidasiFailed) {
-                    //   Future.delayed(const Duration(seconds: 0), () {
-                    //     components.dia!.hide();
-                    //     components.alertBerhasilPesan(
-                    //       state.message!,
-                    //       state.content!,
-                    //       state.image!,
-                    //       IconsButton(
-                    //         onPressed: () async {
-                    //           Navigator.pop(context);
-                    //         },
-                    //         text: 'Ok',
-                    //         iconData: Icons.done,
-                    //         color: Colors.blue,
-                    //         textStyle: const TextStyle(color: Colors.white),
-                    //         iconColor: Colors.white,
-                    //       ),
-                    //     );
-                    //   });
-                    // }
                     return Column(
                       children: [
                         Container(
@@ -493,7 +342,8 @@ class _DashboardState extends State<Dashboard> {
                           ),
                           child: InkWell(
                             onTap: () async {
-                              BlocProvider.of<ValidasiBloc>(context)
+                              context
+                                  .read<ValidasiBloc>()
                                   .add(PesananValidasiEvent());
                             },
                             child: const Padding(
@@ -523,19 +373,13 @@ class _DashboardState extends State<Dashboard> {
                   listener: (context, state) {
                     if (state is HistorySuccecss) {
                       Future.delayed(const Duration(seconds: 0), () {
-                        components.dia!.hide();
-                        print("berhasil");
+                        Navigator.pushNamed(context, '/list_order');
                       });
                     }
                   },
                   builder: (context, state) {
-                    if (state is HistoryLoading) {
+                    if (state is HistoryFailed) {
                       Future.delayed(const Duration(seconds: 0), () {
-                        components.showDia();
-                      });
-                    } else if (state is HistoryFailed) {
-                      Future.delayed(const Duration(seconds: 0), () {
-                        components.dia!.hide();
                         components.alertBerhasilPesan(
                           state.message!,
                           state.content!,
@@ -1088,7 +932,7 @@ class _ProfilesState extends State<Profiles>
                 color: Colors.white,
               ),
               onPressed: () {
-                Navigator.pushNamed(context, '/homeverifikasi');
+                Navigator.pushNamed(context, '/home_verifikasi');
               },
             ),
           ),
@@ -1430,6 +1274,7 @@ class _SettingsState extends State<Settings> {
                 color: Color(0xFF313131),
               ),
               onTap: () {
+                Navigator.pushNamed(context, '/favoritesList');
                 // Navigator.push(
                 //     context,
                 //     MaterialPageRoute(

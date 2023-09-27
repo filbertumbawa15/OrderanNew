@@ -10,6 +10,7 @@ class AppSettingBloc extends Bloc<AppSettingEvent, AppSettingState> {
   AppSettingBloc() : super(AppSettingLoading()) {
     on<AppSettingEvent>((event, emit) {
       final activeSession = sessionManager.anyActiveSession();
+      print(activeSession);
       if (activeSession) {
         emit(AppSettingAuthenticated());
       } else {

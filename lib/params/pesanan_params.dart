@@ -69,3 +69,75 @@ class CekHargaParam {
     };
   }
 }
+
+class AddFavoritParam {
+  String? labelName;
+  String? placeid;
+  int? userId;
+  String? pelabuhanid;
+  String? alamat;
+  String? customer;
+  String? notelpcustomer;
+  String? latitudeplace;
+  String? longitudeplace;
+  String? namapelabuhan;
+  String? note;
+
+  AddFavoritParam(
+    this.labelName,
+    this.placeid,
+    this.userId,
+    this.pelabuhanid,
+    this.alamat,
+    this.customer,
+    this.notelpcustomer,
+    this.latitudeplace,
+    this.longitudeplace,
+    this.namapelabuhan,
+    this.note,
+  );
+
+  Map<String, dynamic> toJson() {
+    return {
+      "labelName": labelName,
+      "placeid": placeid,
+      "userId": userId,
+      "pelabuhanid": pelabuhanid,
+      "alamat": alamat,
+      "customer": customer,
+      "notelpcustomer": notelpcustomer,
+      "latitudeplace": latitudeplace,
+      "longitudeplace": longitudeplace,
+      "namapelabuhan": namapelabuhan,
+      "note": note,
+    };
+  }
+}
+
+class ListOrderParam {
+  int? userId;
+  int? kondisi;
+  int? utcTime;
+
+  ListOrderParam(this.userId, this.kondisi, this.utcTime);
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': userId,
+      'kondisi': kondisi,
+      'utctime': utcTime,
+    };
+  }
+}
+
+class ListOrderDetailParam {
+  String? nobukti;
+
+  ListOrderDetailParam(this.nobukti);
+
+  Map<String, dynamic> toJson() {
+    return {
+      'nobukti': nobukti,
+    };
+  }
+}

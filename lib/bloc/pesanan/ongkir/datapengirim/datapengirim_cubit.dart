@@ -10,7 +10,7 @@ part 'datapengirim_state.dart';
 
 class DatapengirimCubit extends Cubit<DatapengirimState> {
   final ApiClient apiClient = ApiClient();
-  final PesananRepository pesananRepository = PesananRepository();
+  final pesananRepository = PesananRepository();
   DatapengirimCubit() : super(DatapengirimInitial());
 
   void navigatorPushAsal({@required String? route, Object? param}) async {

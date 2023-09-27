@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:tasorderan/core/api_client.dart';
 import 'package:tasorderan/core/session_manager.dart';
 import 'package:tasorderan/params/pesanan_params.dart';
+import 'package:tasorderan/response/pesanan_response.dart';
 
 class PesananRepository extends ApiClient {
   final SessionManager sessionManager = SessionManager();
@@ -88,6 +89,77 @@ class PesananRepository extends ApiClient {
       );
       debugPrint("Result : ${response.data}");
       return response.data;
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<Map<String, dynamic>> addToFavorites(AddFavoritParam param) async {
+    try {
+      print(jsonEncode(param.toJson()));
+      final response = await dio.post('orderemkl-api/public/api/favorites',
+          data: {'data': jsonEncode(param.toJson())},
+          options: Options(headers: {
+            'Authorization': 'Bearer ${sessionManager.getActiveToken()}',
+          }));
+      return response.data;
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<ListOrderResponse> listOrder(ListOrderParam param) async {
+    try {
+      print({'data': jsonEncode(param.toJson())});
+      final response = await dio.get(
+        'orderemkl-api/public/api/pesanan/listpesanan',
+        queryParameters: {
+          'data': jsonEncode(param.toJson()),
+        },
+        options: Options(headers: {
+          'Authorization': 'Bearer ${sessionManager.getActiveToken()}',
+        }),
+      );
+      return ListOrderResponse.fromJson(response.data['data']);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<ListPesananBayarResponse> listPesananWhereUtc(
+      ListOrderDetailParam param) async {
+    try {
+      final response = await dio.get(
+        'orderemkl-api/public/api/pesanan/listpesananwhereUtc',
+        queryParameters: {
+          'data': jsonEncode(param.toJson()),
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${sessionManager.getActiveToken()}',
+          },
+        ),
+      );
+      return ListPesananBayarResponse.fromJson(response.data["data"]);
+    } on DioError catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<String> getDocument(ListOrderDetailParam param) async {
+    try {
+      final response = await dio.get(
+        'orderemkl-api/public/api/pesanan/getDataInvoiceUtama',
+        queryParameters: {
+          'data': jsonEncode(param.toJson()),
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${sessionManager.getActiveToken()}',
+          },
+        ),
+      );
+      return response.data["lampiran"];
     } catch (e) {
       throw Exception(e.toString());
     }

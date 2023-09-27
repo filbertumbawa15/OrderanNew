@@ -4,7 +4,6 @@ import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:material_dialogs/widgets/buttons/icon_button.dart';
-import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:tasorderan/bloc/pesanan/ongkir/datapengirim/datapengirim_cubit.dart';
 import 'package:tasorderan/components/components.dart';
 import 'package:tasorderan/core/api_client.dart';
