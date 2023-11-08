@@ -1,3 +1,5 @@
+import 'package:tasorderan/models/user_models.dart';
+
 class Penerima {
   final String? name;
   final String? notelp;
@@ -68,4 +70,25 @@ class InvoiceItem {
     this.uk_container,
     this.total,
   });
+}
+
+class SyaratKetentuan {
+  final String? nama;
+  final String? nobukti;
+  final String? notelp;
+  final String? tanggal;
+  final String? lokmuat;
+  final String? lokbongkar;
+  final String? harga;
+  final List<String?>? syaratketentuan;
+
+  SyaratKetentuan(
+      {this.nama,
+      this.nobukti,
+      this.notelp,
+      this.tanggal,
+      this.lokmuat,
+      this.lokbongkar,
+      this.harga,
+      this.syaratketentuan});
 }

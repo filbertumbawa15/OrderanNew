@@ -533,6 +533,7 @@ class _TujuanState extends State<Tujuan> {
                     backgroundColor: const Color(0xFFE9558A),
                     textStyle: const TextStyle(
                       color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4.0),
@@ -713,6 +714,7 @@ class _TujuanState extends State<Tujuan> {
                     style: ElevatedButton.styleFrom(
                       textStyle: const TextStyle(
                         color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
                       backgroundColor: const Color(0xFF5599E9),
                       shape: RoundedRectangleBorder(

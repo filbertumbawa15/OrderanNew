@@ -264,7 +264,7 @@ class _PaymentSuccessState extends State<PaymentSuccess> {
                       Icon(
                         Icons.money,
                         color: Color(0xFF747474),
-                      ), // <-- Icon
+                      ),
                       Text(
                         "Refund",
                         style: TextStyle(
@@ -277,6 +277,11 @@ class _PaymentSuccessState extends State<PaymentSuccess> {
                 const SizedBox(width: 15.0),
                 InkWell(
                   onTap: () async {
+                    Navigator.pushNamed(context, '/list_status_pesanan',
+                        arguments: {
+                          'nobukti': nobukti,
+                          'qty': int.parse(qty!),
+                        });
                     // if (int.parse(widget.qty) > 1) {
                     //   _showDialog(context,
                     //       SimpleFontelicoProgressDialogType.normal, 'Normal');
@@ -403,14 +408,13 @@ class _PaymentSuccessState extends State<PaymentSuccess> {
                 print(url);
                 final file = await pdfApi.loadNetworkFile(url);
                 pdfApi.openPdf(file);
+              } else if (state is ListorderdetailFailed) {
+                Future.delayed(const Duration(seconds: 0), () {
+                  components.alert("Invoice Belum Terbit");
+                });
               }
             },
             builder: (context, state) {
-              if (state is ListorderdetailFailed) {
-                Future.delayed(const Duration(seconds: 0), () {
-                  components.alert(state.message!);
-                });
-              }
               return ListView(
                 children: [
                   const SizedBox(height: 10.0),

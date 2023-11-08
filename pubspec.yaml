@@ -1,7 +1,7 @@
 name: tasorderan
 description: A new Flutter project.
 publish_to: 'none'
-version: 1.0.0+2
+version: 1.0.0+3
 
 environment:
   sdk: '>=3.0.5 <4.0.0'
@@ -34,6 +34,10 @@ dependencies:
   dotted_border: ^2.0.0+3
   mask_text_input_formatter: ^2.5.0
   pusher_client: ^2.0.0
+  wakelock: ^0.6.2
+  equatable: ^2.0.5
+  google_maps_flutter: ^2.5.0
+  timeline_tile: ^2.0.0
   # pusher_channels_flutter: ^2.2.0
 
 dev_dependencies:

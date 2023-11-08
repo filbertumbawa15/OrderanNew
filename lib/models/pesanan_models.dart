@@ -325,3 +325,28 @@ class ListOrderBayar {
     );
   }
 }
+
+class StatusBarang {
+  String? tgl_status;
+  int? status_id;
+  String? kode_status;
+  String? keterangan;
+  String? gambar;
+
+  StatusBarang({
+    this.tgl_status,
+    this.status_id,
+    this.kode_status,
+    this.keterangan,
+    this.gambar,
+  });
+
+  // FORMAT TO JSON
+  factory StatusBarang.fromJson(Map<String, dynamic> json) => StatusBarang(
+        tgl_status: json["tglstatus"],
+        status_id: json["pelabuhanidasal"],
+        kode_status: json["status"]["kodestatus"],
+        keterangan: json["status"]["keterangan"],
+        gambar: json["status"]["gambar"],
+      );
+}

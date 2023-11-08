@@ -787,6 +787,7 @@ class _OrderState extends State<Order> {
                       style: ElevatedButton.styleFrom(
                         textStyle: const TextStyle(
                           color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
                         backgroundColor: const Color(0xFF5599E9),
                         shape: RoundedRectangleBorder(

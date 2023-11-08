@@ -2,6 +2,9 @@ import 'dart:async';
 // import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tasorderan/bloc/pesanan/pesanan/bayar/bayar_cubit.dart';
+import 'package:tasorderan/core/api_client.dart';
 // import 'package:flutter/services.dart';
 // import 'package:intl/intl.dart';
 // import 'package:material_dialogs/material_dialogs.dart';
@@ -28,7 +31,8 @@ class Bayar extends StatefulWidget {
 
 class _BayarState extends State<Bayar> {
   Timer? myTimer;
-  ValueNotifier<Duration>? myDuration;
+  // ValueNotifier<Duration>? myDuration;
+  int? time;
   // String payment;
 
   String? harga_bayar;
@@ -42,10 +46,14 @@ class _BayarState extends State<Bayar> {
   String? lokasiBongkar;
   String? nobukti;
 
+  BayarCubit cubit = BayarCubit();
+
+  final apiClient = ApiClient();
+
   @override
   void initState() {
     super.initState();
-    myDuration = ValueNotifier<Duration>(const Duration(seconds: 0));
+    // myDuration = ValueNotifier<Duration>(const Duration(seconds: 0));
     // _initCheckStatus();
     // print(widget.nobukti);
   }
@@ -54,33 +62,34 @@ class _BayarState extends State<Bayar> {
   //   setState(() => myTimer!.cancel());
   // }
 
-  void startTimer() {
-    DateTime startDate = DateTime.parse(waktu_bayar!);
-    DateTime endsDate = DateTime.parse(endDate!);
-    final time = startDate.difference(endsDate).inSeconds;
-    myDuration!.value = Duration(seconds: time);
+  // void startTimer() {
+  //   DateTime startDate = DateTime.parse(waktu_bayar!);
+  //   DateTime endsDate = DateTime.parse(endDate!);
+  //   final time = startDate.difference(endsDate).inSeconds;
+  //   setState(() {
+  //     myDuration = Duration(seconds: time);
+  //   });
 
-    // timer = Timer.periodic(
-    //     Duration(seconds: 20), (Timer t) => checkStatusPayment());
-    myTimer = Timer.periodic(const Duration(seconds: 1), (_) => addTime());
-  }
+  //   // timer = Timer.periodic(
+  //   //     Duration(seconds: 20), (Timer t) => checkStatusPayment());
+  //   myTimer = Timer.periodic(Duration(seconds: 1), (_) => addTime());
+  // }
 
-  void addTime() {
-    const addSeconds = -1;
-    // setState(() {
-    final seconds = myDuration!.value.inSeconds + addSeconds;
-    if (seconds < 0) {
-      print("gagal proses");
-      // setState(() {
-      //   ListPesanan();
-      // });
-      myTimer!.cancel();
-    } else {
-      myDuration!.value = Duration(seconds: seconds);
-      // checkStatusPayment();
-    }
-    // });
-  }
+  // void addTime() {
+  //   const addSeconds = -1;
+  //   setState(() {
+  //     final seconds = myDuration.inSeconds + addSeconds;
+  //     if (seconds < 0) {
+  //       // setState(() {
+  //       //   ListPesanan();
+  //       // });
+  //       myTimer!.cancel();
+  //     } else {
+  //       myDuration = Duration(seconds: seconds);
+  //       // checkStatusPayment();
+  //     }
+  //   });
+  // }
 
   // void _initCheckStatus() async {
   //   globals.channel.bind(
@@ -267,524 +276,644 @@ class _BayarState extends State<Bayar> {
       waktu_bayar = orderbayar.waktu_bayar;
       bill_no = orderbayar.bill_no;
       endDate = orderbayar.endDate;
-      link = "Orderan";
+      link = args['param'];
       lokasiMuat = orderbayar.lokasiMuat;
       lokasiBongkar = orderbayar.lokasiBongkar;
       nobukti = orderbayar.nobukti;
-      startTimer();
+      DateTime startDate = DateTime.parse(waktu_bayar!);
+      DateTime endsDate = DateTime.parse(endDate!);
+      time = startDate.difference(endsDate).inSeconds;
+      cubit.startTimer(time!);
     }
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        leading: IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: Color(0xFFB7B7B7),
-            )),
-        title: const Text(
-          "Bayar",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 18.0,
-            fontFamily: 'Nunito-Medium',
-          ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => BayarCubit(),
         ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-      ),
-      backgroundColor: const Color(0xFFF1F1EF),
-      body: ListView(
-        children: [
-          tracking(),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 15.0),
-            child: Container(
-              padding: const EdgeInsets.all(8.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-              ),
-              child: Column(
-                children: [
-                  Column(
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          const SizedBox(width: 0.0),
-                          Expanded(
-                              // Wrap this column inside an expanded widget so that framework allocates max width for this column inside this row
-                              child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const Text(
-                                'Lokasi Muat',
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  color: Color(0xFF666666),
-                                  fontFamily: 'Nunito-Medium',
-                                ),
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Expanded(
-                                    child: GestureDetector(
-                                        onTap: () {
-                                          // setMap(
-                                          //     '${widget.latitude_pelabuhan_asal},${widget.longitude_pelabuhan_asal}',
-                                          //     widget.origincontroller);
-                                          // setState(() {
-                                          //   distance = widget.jarakasal;
-                                          //   duration = widget.waktuasal;
-                                          // });
-                                        },
-                                        // Then wrap your text widget with expanded
-                                        child: Text(
-                                          lokasiMuat!,
-                                          style: const TextStyle(
-                                            fontFamily: 'Nunito-Medium',
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          softWrap: true,
-                                        )),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10.0),
-                  Column(
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          const SizedBox(width: 0.0),
-                          Expanded(
-                              // Wrap this column inside an expanded widget so that framework allocates max width for this column inside this row
-                              child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const Text(
-                                'Lokasi Bongkar',
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  color: Color(0xFF666666),
-                                  fontFamily: 'Nunito-Medium',
-                                ),
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Expanded(
-                                    child: GestureDetector(
-                                        onTap: () {
-                                          // setMap(
-                                          //     '${widget.latitude_pelabuhan_asal},${widget.longitude_pelabuhan_asal}',
-                                          //     widget.origincontroller);
-                                          // setState(() {
-                                          //   distance = widget.jarakasal;
-                                          //   duration = widget.waktuasal;
-                                          // });
-                                        },
-                                        // Then wrap your text widget with expanded
-                                        child: Text(
-                                          lokasiBongkar!,
-                                          style: const TextStyle(
-                                            fontFamily: 'Nunito-Medium',
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          softWrap: true,
-                                        )),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10.0),
-                  Column(
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          const SizedBox(width: 0.0),
-                          Expanded(
-                              // Wrap this column inside an expanded widget so that framework allocates max width for this column inside this row
-                              child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const Text(
-                                'Pembayaran',
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  color: Color(0xFF666666),
-                                  fontFamily: 'Nunito-Medium',
-                                ),
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Expanded(
-                                    child: GestureDetector(
-                                        onTap: () {
-                                          // setMap(
-                                          //     '${widget.latitude_pelabuhan_asal},${widget.longitude_pelabuhan_asal}',
-                                          //     widget.origincontroller);
-                                          // setState(() {
-                                          //   distance = widget.jarakasal;
-                                          //   duration = widget.waktuasal;
-                                          // });
-                                        },
-                                        // Then wrap your text widget with expanded
-                                        child: Text(
-                                          payment_name!,
-                                          style: const TextStyle(
-                                            fontFamily: 'Nunito-Medium',
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          softWrap: true,
-                                        )),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10.0),
-                  Column(
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          const SizedBox(width: 0.0),
-                          Expanded(
-                              // Wrap this column inside an expanded widget so that framework allocates max width for this column inside this row
-                              child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const Text(
-                                'No. Virtual Account',
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  color: Color(0xFF666666),
-                                  fontFamily: 'Nunito-Medium',
-                                ),
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: noVA,
-                                          style: const TextStyle(
-                                            fontFamily: 'Nunito-Medium',
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          leading: IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Color(0xFFB7B7B7),
+              )),
+          title: const Text(
+            "Bayar",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 18.0,
+              fontFamily: 'Nunito-Medium',
+            ),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+        ),
+        backgroundColor: const Color(0xFFF1F1EF),
+        body: BlocConsumer<BayarCubit, BayarState>(
+          listener: (context, state) {
+            if (state is BayarComplete) {
+              print("Langsung navigasi ke halaman success pay");
+            }
+          },
+          builder: (context, state) {
+            if (state is BayarLoading) {
+              print("Munculkan dialog loading");
+            } else if (state is BayarFailed) {
+              print("Gagalkan ke success pay, cek gagalnya apaan");
+            }
+            return ListView(
+              children: [
+                tracking(),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 8.0, right: 8.0, top: 15.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      children: [
+                        Column(
+                          children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const SizedBox(width: 0.0),
+                                Expanded(
+                                    // Wrap this column inside an expanded widget so that framework allocates max width for this column inside this row
+                                    child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    const Text(
+                                      'Lokasi Muat',
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                        color: Color(0xFF666666),
+                                        fontFamily: 'Nunito-Medium',
+                                      ),
+                                    ),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: GestureDetector(
+                                              onTap: () {
+                                                // setMap(
+                                                //     '////${widget.latitude_pelabuhan_asal},${widget.longitude_pelabuhan_asal}',
+                                                //     widget.origincontroller);
+                                                // setState(() {
+                                                //   distance = widget.jarakasal;
+                                                //   duration = widget.waktuasal;
+                                                // });
+                                              },
+                                              // Then wrap your text widget with expanded
+                                              child: Text(
+                                                lokasiMuat!,
+                                                style: const TextStyle(
+                                                  fontFamily: 'Nunito-Medium',
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                softWrap: true,
+                                              )),
                                         ),
-                                        WidgetSpan(
-                                          child: InkWell(
-                                            onTap: () async {
-                                              // await Clipboard.setData(
-                                              //     ClipboardData(
-                                              //         text: widget.noVA));
-                                              // Fluttertoast.showToast(
-                                              //     msg:
-                                              //         "No. Virtual Acount sudah di copy ke clipboard",
-                                              //     toastLength:
-                                              //         Toast.LENGTH_SHORT,
-                                              //     gravity: ToastGravity.BOTTOM,
-                                              //     timeInSecForIosWeb: 1,
-                                              //     textColor: Colors.white,
-                                              //     fontSize: 16.0);
-                                            },
-                                            child: const Icon(
-                                                Icons.content_copy,
-                                                size: 18),
+                                      ],
+                                    ),
+                                  ],
+                                )),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10.0),
+                        Column(
+                          children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const SizedBox(width: 0.0),
+                                Expanded(
+                                    // Wrap this column inside an expanded widget so that framework allocates max width for this column inside this row
+                                    child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    const Text(
+                                      'Lokasi Bongkar',
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                        color: Color(0xFF666666),
+                                        fontFamily: 'Nunito-Medium',
+                                      ),
+                                    ),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: GestureDetector(
+                                              onTap: () {
+                                                // setMap(
+                                                //     '${widget.latitude_pelabuhan_asal},${widget.longitude_pelabuhan_asal}',
+                                                //     widget.origincontroller);
+                                                // setState(() {
+                                                //   distance = widget.jarakasal;
+                                                //   duration = widget.waktuasal;
+                                                // });
+                                              },
+                                              // Then wrap your text widget with expanded
+                                              child: Text(
+                                                lokasiBongkar!,
+                                                style: const TextStyle(
+                                                  fontFamily: 'Nunito-Medium',
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                softWrap: true,
+                                              )),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10.0),
+                        Column(
+                          children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const SizedBox(width: 0.0),
+                                Expanded(
+                                    // Wrap this column inside an expanded widget so that framework allocates max width for this column inside this row
+                                    child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    const Text(
+                                      'Pembayaran',
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                        color: Color(0xFF666666),
+                                        fontFamily: 'Nunito-Medium',
+                                      ),
+                                    ),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: GestureDetector(
+                                              onTap: () {
+                                                // setMap(
+                                                //     '${widget.latitude_pelabuhan_asal},${widget.longitude_pelabuhan_asal}',
+                                                //     widget.origincontroller);
+                                                // setState(() {
+                                                //   distance = widget.jarakasal;
+                                                //   duration = widget.waktuasal;
+                                                // });
+                                              },
+                                              // Then wrap your text widget with expanded
+                                              child: Text(
+                                                payment_name!,
+                                                style: const TextStyle(
+                                                  fontFamily: 'Nunito-Medium',
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                softWrap: true,
+                                              )),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10.0),
+                        Column(
+                          children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const SizedBox(width: 0.0),
+                                Expanded(
+                                    // Wrap this column inside an expanded widget so that framework allocates max width for this column inside this row
+                                    child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    const Text(
+                                      'No. Virtual Account',
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                        color: Color(0xFF666666),
+                                        fontFamily: 'Nunito-Medium',
+                                      ),
+                                    ),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: noVA,
+                                                style: const TextStyle(
+                                                  fontFamily: 'Nunito-Medium',
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                              WidgetSpan(
+                                                child: InkWell(
+                                                  onTap: () async {
+                                                    // await Clipboard.setData(
+                                                    //     ClipboardData(
+                                                    //         text: widget.noVA));
+                                                    // Fluttertoast.showToast(
+                                                    //     msg:
+                                                    //         "No. Virtual Acount sudah di copy ke clipboard",
+                                                    //     toastLength:
+                                                    //         Toast.LENGTH_SHORT,
+                                                    //     gravity: ToastGravity.BOTTOM,
+                                                    //     timeInSecForIosWeb: 1,
+                                                    //     textColor: Colors.white,
+                                                    //     fontSize: 16.0);
+                                                  },
+                                                  child: const Icon(
+                                                      Icons.content_copy,
+                                                      size: 18),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 15.0),
-                  Column(
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          const SizedBox(width: 0.0),
-                          Expanded(
-                              child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              const Text(
-                                'Total Harga',
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  color: Color(0xFF666666),
-                                  fontFamily: 'Nunito-Medium',
-                                ),
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Expanded(
-                                    child: GestureDetector(
-                                        onTap: () {
-                                          // setMap(
-                                          //     '${widget.latitude_pelabuhan_asal},${widget.longitude_pelabuhan_asal}',
-                                          //     widget.origincontroller);
-                                          // setState(() {
-                                          //   distance = widget.jarakasal;
-                                          //   duration = widget.waktuasal;
-                                          // });
-                                        },
-                                        // Then wrap your text widget with expanded
-                                        child: Text(
-                                          // "asdf",
-                                          NumberFormat.currency(
-                                                  locale: 'id',
-                                                  symbol: 'Rp.',
-                                                  decimalDigits: 00)
-                                              .format(double.tryParse(
-                                                  harga_bayar.toString())),
+                                  ],
+                                )),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 15.0),
+                        Column(
+                          children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                const SizedBox(width: 0.0),
+                                Expanded(
+                                    child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    const Text(
+                                      'Total Harga',
+                                      style: TextStyle(
+                                        fontSize: 18.0,
+                                        color: Color(0xFF666666),
+                                        fontFamily: 'Nunito-Medium',
+                                      ),
+                                    ),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: GestureDetector(
+                                              onTap: () {
+                                                // setMap(
+                                                //     '${widget.latitude_pelabuhan_asal},${widget.longitude_pelabuhan_asal}',
+                                                //     widget.origincontroller);
+                                                // setState(() {
+                                                //   distance = widget.jarakasal;
+                                                //   duration = widget.waktuasal;
+                                                // });
+                                              },
+                                              // Then wrap your text widget with expanded
+                                              child: Text(
+                                                // "asdf",
+                                                NumberFormat.currency(
+                                                        locale: 'id',
+                                                        symbol: 'Rp.',
+                                                        decimalDigits: 00)
+                                                    .format(double.tryParse(
+                                                        harga_bayar
+                                                            .toString())),
+                                                style: const TextStyle(
+                                                  fontSize: 18.0,
+                                                  fontFamily: 'Nunito-Medium',
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                                softWrap: true,
+                                              )),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 7.0),
+                                    const Text(
+                                      'Harga belum terhitung biaya tambahan',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Color(0xFF666666),
+                                        fontFamily: 'Nunito-Medium',
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10.0),
+                        const Divider(
+                          thickness: 5,
+                          color: Color(0xFFE6E6E6),
+                        ),
+                        const Text(
+                          "Waktu Pembayaran",
+                          style: TextStyle(
+                              fontSize: 16.0, color: Color(0xFF666666)),
+                        ),
+                        BlocBuilder<BayarCubit, BayarState>(
+                            builder: (context, state) {
+                          if (state is BayarInitial) {
+                            apiClient.channel!.bind(
+                                "App\\Events\\CheckStatusOrder", (event) async {
+                              BlocProvider.of<BayarCubit>(context)
+                                  .cekPayment(nobukti!);
+                            });
+                            BlocProvider.of<BayarCubit>(context)
+                                .startTimer(time!);
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          if (state is BayarInProgress) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      child: Text(
+                                          "${state.elapsed!.inHours.toString().padLeft(2, '0')}:",
                                           style: const TextStyle(
-                                            fontSize: 18.0,
-                                            fontFamily: 'Nunito-Medium',
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                          softWrap: true,
-                                        )),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 7.0),
-                              const Text(
-                                'Harga belum terhitung biaya tambahan',
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  color: Color(0xFF666666),
-                                  fontFamily: 'Nunito-Medium',
+                                              fontFamily: "Oxanium-Reguler",
+                                              color: Colors.black,
+                                              fontSize: 40)),
+                                    ),
+                                    const SizedBox(height: 20),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          )),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10.0),
-                  const Divider(
-                    thickness: 5,
-                    color: Color(0xFFE6E6E6),
-                  ),
-                  const Text(
-                    "Waktu Pembayaran",
-                    style: TextStyle(fontSize: 16.0, color: Color(0xFF666666)),
-                  ),
-                  displayTimer(),
-                  const Text(
-                    "NB: Nomor VA akan hangus setelah waktu pembayaran telah dilewati, maka lakukan pembayaran dan anda dapat mengecek status pesanan anda.",
-                    style: TextStyle(
-                      fontSize: 13.0,
-                      fontFamily: "Nunito-Medium",
-                      color: Color(0xFF666666),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      child: Text(
+                                          "${state.elapsed!.inMinutes.remainder(60).toString().padLeft(2, '0')}:",
+                                          style: const TextStyle(
+                                              fontFamily: "Oxanium-Reguler",
+                                              color: Colors.black,
+                                              fontSize: 40)),
+                                    ),
+                                    const SizedBox(height: 20),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      child: Text(
+                                          state.elapsed!.inSeconds
+                                              .remainder(60)
+                                              .toString()
+                                              .padLeft(2, '0'),
+                                          style: const TextStyle(
+                                              fontFamily: "Oxanium-Reguler",
+                                              color: Colors.black,
+                                              fontSize: 40)),
+                                    ),
+                                    const SizedBox(height: 20),
+                                  ],
+                                ),
+                              ],
+                            );
+                          }
+                          return Container();
+                        }),
+                        const Text(
+                          "NB: Nomor VA akan hangus setelah waktu pembayaran telah dilewati, maka lakukan pembayaran dan anda dapat mengecek status pesanan anda.",
+                          style: TextStyle(
+                            fontSize: 13.0,
+                            fontFamily: "Nunito-Medium",
+                            color: Color(0xFF666666),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 10.0),
+                      ],
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10.0),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20.0),
-        ],
-      ),
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // setState(() {
-                  //   myTimer.cancel();
-                  // });
-                  // Navigator.pushAndRemoveUntil(
-                  //     context,
-                  //     MaterialPageRoute(builder: (context) => Home()),
-                  //     (route) => false);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF5599E9),
-                ),
-                icon: const Icon(Icons.home),
-                label: const Text(
-                  "Kembali Ke Home",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Nunito-Medium',
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // showDialog(
-                  //   context: context,
-                  //   builder: (BuildContext context) {
-                  //     // return object of type Dialog
-                  //     return AlertDialog(
-                  //       title: new Text(
-                  //         "Apakah anda yakin?",
-                  //         style: TextStyle(
-                  //             fontFamily: 'Nunito-Medium',
-                  //             fontWeight: FontWeight.bold),
-                  //       ),
-                  //       content: new Text(
-                  //         "Jika anda melakukan pembatalan, semua data yang anda kirim akan dibatalkan",
-                  //         style: TextStyle(fontFamily: 'Nunito-Medium'),
-                  //       ),
-                  //       actions: <Widget>[
-                  //         new TextButton(
-                  //           child: new Text(
-                  //             "BATALKAN",
-                  //             style: TextStyle(
-                  //               fontFamily: 'Nunito-ExtraBold',
-                  //             ),
-                  //           ),
-                  //           onPressed: () async {
-                  //             setState(() {
-                  //               myTimer.cancel();
-                  //             });
-                  //             _showDialog(
-                  //                 context,
-                  //                 SimpleFontelicoProgressDialogType.normal,
-                  //                 'Normal');
-                  //             final url =
-                  //                 '${globals.url}/api-orderemkl/public/api/pesanan/batalTransaksi';
-                  //             var data = {
-                  //               "trx_id": widget.noVA,
-                  //               "paymentdate": DateFormat('yyyy-MM-dd HH:mm:ss')
-                  //                   .format(DateTime.now()),
-                  //             };
-                  //             final response = await http.post(
-                  //               Uri.parse(url),
-                  //               headers: {
-                  //                 'Accept': 'application/json',
-                  //                 'Authorization':
-                  //                     'Bearer ${globals.accessToken}',
-                  //               },
-                  //               body: {'data': json.encode(data)},
-                  //             );
-                  //             if (response.statusCode == 200) {
-                  //               Future.delayed(const Duration(seconds: 2),
-                  //                   () async {
-                  //                 await _dialog.hide();
-                  //                 Dialogs.materialDialog(
-                  //                     color: Colors.white,
-                  //                     msg:
-                  //                         "Orderan berhasil dibatalkan, cek list pesanan anda untuk melihat status pesanan tersebut",
-                  //                     title: 'Pembatalan Orderan Berhasil',
-                  //                     lottieBuilder: Lottie.asset(
-                  //                       'assets/imgs/cancel-order.json',
-                  //                       fit: BoxFit.contain,
-                  //                     ),
-                  //                     context: context,
-                  //                     actions: [
-                  //                       IconsButton(
-                  //                         onPressed: () async {
-                  //                           Navigator.pushAndRemoveUntil(
-                  //                               context,
-                  //                               MaterialPageRoute(
-                  //                                   builder: ((context) =>
-                  //                                       Home())),
-                  //                               (route) => false);
-                  //                         },
-                  //                         text: 'Ok',
-                  //                         iconData: Icons.done,
-                  //                         color: Colors.blue,
-                  //                         textStyle: TextStyle(
-                  //                           color: Colors.white,
-                  //                           fontFamily: 'Nunito-ExtraBold',
-                  //                         ),
-                  //                         iconColor: Colors.white,
-                  //                       ),
-                  //                     ]);
-                  //               });
-                  //             } else {
-                  //               await _dialog.hide();
-                  //               globals.alert(context, 'Gagal');
-                  //               throw Exception();
-                  //             }
-                  //           },
-                  //         ),
-                  //         // usually buttons at the bottom of the dialog
-                  //         new TextButton(
-                  //           child: new Text(
-                  //             "TIDAK",
-                  //             style: TextStyle(
-                  //               fontFamily: 'Nunito-ExtraBold',
-                  //             ),
-                  //           ),
-                  //           onPressed: () {
-                  //             Navigator.of(context).pop();
-                  //           },
-                  //         ),
-                  //       ],
-                  //     );
-                  //   },
-                  // );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE95555),
-                ),
-                icon: const Icon(Icons.close),
-                label: const Text(
-                  "Batalkan Pesanan",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Nunito-Medium',
-                    fontWeight: FontWeight.bold,
+                const SizedBox(height: 20.0),
+              ],
+            );
+          },
+        ),
+        bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    // setState(() {
+                    //   myTimer.cancel();
+                    // });
+                    link == "ListPesanan"
+                        ? Navigator.pop(context)
+                        : Navigator.pushNamedAndRemoveUntil(
+                            context, '/home', (route) => false);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF5599E9),
                   ),
+                  icon: link == "ListPesanan"
+                      ? const Icon(Icons.list)
+                      : const Icon(Icons.home),
+                  label: link == "ListPesanan"
+                      ? const Text(
+                          "Kembali Ke List Pesanan",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'Nunito-Medium',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : const Text(
+                          "Kembali Ke Home",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'Nunito-Medium',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    // showDialog(
+                    //   context: context,
+                    //   builder: (BuildContext context) {
+                    //     // return object of type Dialog
+                    //     return AlertDialog(
+                    //       title: new Text(
+                    //         "Apakah anda yakin?",
+                    //         style: TextStyle(
+                    //             fontFamily: 'Nunito-Medium',
+                    //             fontWeight: FontWeight.bold),
+                    //       ),
+                    //       content: new Text(
+                    //         "Jika anda melakukan pembatalan, semua data yang anda kirim akan dibatalkan",
+                    //         style: TextStyle(fontFamily: 'Nunito-Medium'),
+                    //       ),
+                    //       actions: <Widget>[
+                    //         new TextButton(
+                    //           child: new Text(
+                    //             "BATALKAN",
+                    //             style: TextStyle(
+                    //               fontFamily: 'Nunito-ExtraBold',
+                    //             ),
+                    //           ),
+                    //           onPressed: () async {
+                    //             setState(() {
+                    //               myTimer.cancel();
+                    //             });
+                    //             _showDialog(
+                    //                 context,
+                    //                 SimpleFontelicoProgressDialogType.normal,
+                    //                 'Normal');
+                    //             final url =
+                    //                 '${globals.url}/api-orderemkl/public/api/pesanan/batalTransaksi';
+                    //             var data = {
+                    //               "trx_id": widget.noVA,
+                    //               "paymentdate": DateFormat('yyyy-MM-dd HH:mm:ss')
+                    //                   .format(DateTime.now()),
+                    //             };
+                    //             final response = await http.post(
+                    //               Uri.parse(url),
+                    //               headers: {
+                    //                 'Accept': 'application/json',
+                    //                 'Authorization':
+                    //                     'Bearer ${globals.accessToken}',
+                    //               },
+                    //               body: {'data': json.encode(data)},
+                    //             );
+                    //             if (response.statusCode == 200) {
+                    //               Future.delayed(const Duration(seconds: 2),
+                    //                   () async {
+                    //                 await _dialog.hide();
+                    //                 Dialogs.materialDialog(
+                    //                     color: Colors.white,
+                    //                     msg:
+                    //                         "Orderan berhasil dibatalkan, cek list pesanan anda untuk melihat status pesanan tersebut",
+                    //                     title: 'Pembatalan Orderan Berhasil',
+                    //                     lottieBuilder: Lottie.asset(
+                    //                       'assets/imgs/cancel-order.json',
+                    //                       fit: BoxFit.contain,
+                    //                     ),
+                    //                     context: context,
+                    //                     actions: [
+                    //                       IconsButton(
+                    //                         onPressed: () async {
+                    //                           Navigator.pushAndRemoveUntil(
+                    //                               context,
+                    //                               MaterialPageRoute(
+                    //                                   builder: ((context) =>
+                    //                                       Home())),
+                    //                               (route) => false);
+                    //                         },
+                    //                         text: 'Ok',
+                    //                         iconData: Icons.done,
+                    //                         color: Colors.blue,
+                    //                         textStyle: TextStyle(
+                    //                           color: Colors.white,
+                    //                           fontFamily: 'Nunito-ExtraBold',
+                    //                         ),
+                    //                         iconColor: Colors.white,
+                    //                       ),
+                    //                     ]);
+                    //               });
+                    //             } else {
+                    //               await _dialog.hide();
+                    //               globals.alert(context, 'Gagal');
+                    //               throw Exception();
+                    //             }
+                    //           },
+                    //         ),
+                    //         // usually buttons at the bottom of the dialog
+                    //         new TextButton(
+                    //           child: new Text(
+                    //             "TIDAK",
+                    //             style: TextStyle(
+                    //               fontFamily: 'Nunito-ExtraBold',
+                    //             ),
+                    //           ),
+                    //           onPressed: () {
+                    //             Navigator.of(context).pop();
+                    //           },
+                    //         ),
+                    //       ],
+                    //     );
+                    //   },
+                    // );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFE95555),
+                  ),
+                  icon: const Icon(Icons.close),
+                  label: const Text(
+                    "Batalkan Pesanan",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Nunito-Medium',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -873,11 +1002,11 @@ class _BayarState extends State<Bayar> {
     );
   }
 
-  Widget displayTimer() {
+  Widget displayTimer(Duration elapsed) {
     String strDigits(int n) => n.toString().padLeft(2, '0');
-    final hours = strDigits(myDuration!.value.inHours);
-    final minutes = strDigits(myDuration!.value.inMinutes.remainder(60));
-    final seconds = strDigits(myDuration!.value.inSeconds.remainder(60));
+    final hours = strDigits(elapsed.inHours);
+    final minutes = strDigits(elapsed.inMinutes.remainder(60));
+    final seconds = strDigits(elapsed.inSeconds.remainder(60));
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       displayTimerUI(time: '$hours:'),
       const SizedBox(

@@ -69,6 +69,11 @@ class Tools extends StatelessWidget {
         msg: msg, title: title, context: context, actions: action);
   }
 
+  void printWrapped(String text) {
+    final pattern = RegExp('.{1,800}');
+    pattern.allMatches(text).forEach((match) => print(match.group(0)));
+  }
+
   Widget? bottomSheet() {
     showModalBottomSheet(
         isScrollControlled: true,

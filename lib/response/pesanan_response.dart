@@ -22,6 +22,8 @@
 //   }
 // }
 
+import 'dart:convert';
+
 import 'package:tasorderan/models/pesanan_models.dart';
 
 class FavoriteResponse {
@@ -55,6 +57,29 @@ class ListPesananBayarResponse {
   factory ListPesananBayarResponse.fromJson(Map<String, dynamic> json) {
     return ListPesananBayarResponse(
       listOrderBayar: ListOrderBayar.fromJson(json),
+    );
+  }
+}
+
+class ListPesananStatusResponse {
+  List<StatusBarang>? listpesananStatus;
+  String? nobukti;
+  String? qty;
+  String? nocont;
+
+  ListPesananStatusResponse(
+      {this.nobukti, this.qty, this.nocont, this.listpesananStatus});
+
+  factory ListPesananStatusResponse.fromJson(Map<String, dynamic> json) {
+    List<StatusBarang> listPesanan = [];
+    listPesanan = (json['pesananstatus'] as List)
+        .map((data) => StatusBarang.fromJson(data))
+        .toList();
+    return ListPesananStatusResponse(
+      listpesananStatus: listPesanan,
+      nobukti: json['nobukti'],
+      qty: json['qty'],
+      nocont: json['nocont'],
     );
   }
 }

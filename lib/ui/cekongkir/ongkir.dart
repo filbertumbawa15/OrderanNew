@@ -583,10 +583,17 @@ class _OngkirState extends State<Ongkir> {
                                   ));
                             },
                       child: const Padding(
-                          padding: EdgeInsets.only(
-                              left: 16.0, right: 16.0, top: 12, bottom: 12),
-                          child: Text("Cek Ongkir",
-                              style: TextStyle(fontSize: 14.0))),
+                        padding: EdgeInsets.only(
+                            left: 16.0, right: 16.0, top: 12, bottom: 12),
+                        child: Text(
+                          "Cek Ongkir",
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     );
                   },
                 );

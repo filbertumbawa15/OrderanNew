@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:tasorderan/bloc/user/register/register_user_bloc.dart';
 import 'package:tasorderan/components/components.dart';
 import 'package:tasorderan/ui/auth/otp.dart';
 
 class Register extends StatefulWidget {
+  const Register({super.key});
   @override
   State<Register> createState() => _RegisterState();
 }
@@ -97,7 +97,7 @@ class _RegisterState extends State<Register> {
                                         .withOpacity(0.65),
                                     border: const OutlineInputBorder(
                                       borderRadius: BorderRadius.all(
-                                          Radius.circular(8.0)),
+                                          Radius.circular(0.0)),
                                       borderSide:
                                           BorderSide(color: Color(0xFFAEAEAE)),
                                     ),
@@ -147,7 +147,7 @@ class _RegisterState extends State<Register> {
                                         .withOpacity(0.65),
                                     border: const OutlineInputBorder(
                                       borderRadius: BorderRadius.all(
-                                          Radius.circular(8.0)),
+                                          Radius.circular(0.0)),
                                       borderSide:
                                           BorderSide(color: Color(0xFFAEAEAE)),
                                     ),
@@ -193,7 +193,7 @@ class _RegisterState extends State<Register> {
                                       const Color(0xFFAEAEAE).withOpacity(0.65),
                                   border: const OutlineInputBorder(
                                     borderRadius:
-                                        BorderRadius.all(Radius.circular(8.0)),
+                                        BorderRadius.all(Radius.circular(0.0)),
                                     borderSide:
                                         BorderSide(color: Color(0xFFAEAEAE)),
                                   ),
@@ -245,7 +245,7 @@ class _RegisterState extends State<Register> {
                                             .withOpacity(0.65),
                                         border: const OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(8.0)),
+                                              Radius.circular(0.0)),
                                           borderSide: BorderSide(
                                               color: Color(0xFFAEAEAE)),
                                         ),
@@ -317,6 +317,10 @@ class _RegisterState extends State<Register> {
                                     builder: (context, value, child) {
                                       return ElevatedButton(
                                         style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(0.0),
+                                          ),
                                           backgroundColor:
                                               const Color(0xFF5599E9),
                                         ),
@@ -344,7 +348,9 @@ class _RegisterState extends State<Register> {
                                         child: const Text(
                                           'Register',
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold),
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       );
                                     });

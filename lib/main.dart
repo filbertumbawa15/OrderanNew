@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:tasorderan/bloc/user/verifikasi/verifikasi_cubit.dart';
 import 'package:tasorderan/components/components.dart';
@@ -21,6 +22,7 @@ import 'package:tasorderan/ui/home.dart';
 import 'package:tasorderan/ui/order/asal_order.dart';
 import 'package:tasorderan/ui/order/bayar.dart';
 import 'package:tasorderan/ui/order/list_order.dart';
+import 'package:tasorderan/ui/order/list_status_pesanan.dart';
 import 'package:tasorderan/ui/order/order.dart';
 import 'package:tasorderan/ui/order/payment_success.dart';
 import 'package:tasorderan/ui/order/total.dart';
@@ -49,6 +51,9 @@ void main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Hive.initFlutter();
   await Hive.openBox('session');
+  if (Platform.isAndroid) {
+    AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
+  }
   runApp(MyApp());
   FlutterNativeSplash.remove();
 }
@@ -73,8 +78,7 @@ class MyApp extends StatelessWidget {
       child: BlocBuilder<AppSettingBloc, AppSettingState>(
           builder: (context, state) {
         if (state is AppSettingLoading) {
-          apiClient.channel!.bind("App\\Events\\CheckStatusOrder",
-              (event) async {
+          apiClient.channel!.bind("App\\Events\\UserVerified", (event) async {
             BlocProvider.of<VerifikasiCubit>(context)
                 .cekVerifikasi(sessionManager.getActiveId()!);
           });
@@ -132,6 +136,8 @@ class MyApp extends StatelessWidget {
                   "/payment_success": (BuildContext context) =>
                       const PaymentSuccess(),
                   "/list_order": (BuildContext context) => const ListOrder(),
+                  "/list_status_pesanan": (BuildContext context) =>
+                      const ListStatusPesanan(),
                   // "/chats": (BuildContext context) => new Chats(),
                   // "/syaratdanketentuan": (BuildContext context) =>
                   //     new SyaratKetentuanWidget(),

@@ -76,7 +76,7 @@ class _OtpVerificationState extends State<OtpVerification>
                         padding: EdgeInsets.only(
                             left: 15.0, top: 0.0, right: 15.0, bottom: 18.0),
                         child: Text(
-                          'Kami telah mengirimkan kode verifikasi kepada email example@gmail.com',
+                          'Mohon untuk mengecek OTP tersebut di email yang diinput sebelumnya.',
                           textAlign: TextAlign.center,
                         ),
                       ),

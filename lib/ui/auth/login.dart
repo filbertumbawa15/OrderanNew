@@ -104,7 +104,7 @@ class _LoginState extends State<Login> {
                                         .withOpacity(0.65),
                                     border: const OutlineInputBorder(
                                       borderRadius: BorderRadius.all(
-                                          Radius.circular(8.0)),
+                                          Radius.circular(0.0)),
                                       borderSide:
                                           BorderSide(color: Color(0xFFAEAEAE)),
                                     ),
@@ -161,7 +161,7 @@ class _LoginState extends State<Login> {
                                             .withOpacity(0.65),
                                         border: const OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(8.0)),
+                                              Radius.circular(0.0)),
                                           borderSide: BorderSide(
                                               color: Color(0xFFAEAEAE)),
                                         ),
@@ -234,6 +234,10 @@ class _LoginState extends State<Login> {
                                   builder: (context, value, child) {
                                     return ElevatedButton(
                                       style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(0.0),
+                                        ),
                                         backgroundColor:
                                             const Color(0xFF5599E9),
                                       ),
@@ -258,6 +262,7 @@ class _LoginState extends State<Login> {
                                       child: const Text(
                                         'Login',
                                         style: TextStyle(
+                                          color: Colors.white,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 15.0,
                                         ),

@@ -32,6 +32,7 @@ class ListOrderBloc extends Bloc<ListOrderEvent, ListOrderState> {
               try {
                 final param = ListOrderDetailParam(
                   event.nobukti,
+                  0,
                 );
                 final reqAPI =
                     await pesananRepository.listPesananWhereUtc(param);
@@ -39,6 +40,7 @@ class ListOrderBloc extends Bloc<ListOrderEvent, ListOrderState> {
                   event.route,
                   arguments: {
                     'listOrderBayar': reqAPI.listOrderBayar,
+                    'param': 'ListPesanan',
                   },
                 );
                 emit(ListordernavigatorSuccessPaymentLoaded());

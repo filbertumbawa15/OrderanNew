@@ -13,6 +13,7 @@ class ListorderdetailCubit extends Cubit<ListorderdetailState> {
     try {
       final param = ListOrderDetailParam(
         nobukti,
+        0,
       );
       final response = await pesananRepository.getDocument(param);
       if (response == "") {

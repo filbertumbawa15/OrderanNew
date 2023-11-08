@@ -4,10 +4,14 @@ import 'package:dio/dio.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:tasorderan/bloc/pesanan/pesanan/bayar/bayar_cubit.dart';
 import 'package:tasorderan/components/components.dart';
 import 'package:tasorderan/core/api_client.dart';
 import 'package:tasorderan/core/session_manager.dart';
 import 'package:tasorderan/models/pesanan_models.dart';
+import 'package:tasorderan/params/pesanan_params.dart';
 // import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
 class Total extends StatefulWidget {
@@ -25,6 +29,8 @@ class _TotalState extends State<Total> {
   ValueNotifier<bool>? _isSyarat;
   ValueNotifier<bool>? _isButtondisabled;
   final components = Tools();
+  final sessionManager = SessionManager();
+  final apiClient = ApiClient();
 
   String? origincontroller;
   String? placeidasal;
@@ -1247,79 +1253,153 @@ class _TotalState extends State<Total> {
         ],
         // ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          height: 40.0,
-          padding: const EdgeInsets.only(
-              left: 8.0, bottom: 5.0, top: 0.0, right: 8.0),
-          child: ValueListenableBuilder(
-            valueListenable: _isButtondisabled!,
-            builder: (context, value, index) {
-              return ElevatedButton(
-                onPressed: value
-                    ? null
-                    : () async {
-                        //  && isSyarat != 0
-                        // if (_selectedpembayaran == null) {
-                        //   await globals.alert(context, 'Pembayaran tidak boleh kosong');
-                        // } else if (isSyarat == 0) {
-                        //   await globals.alert(
-                        //       context, 'Mohon menyetujui syarat dan ketentuan');
-                        // } else {
-                        //   // print("asdf");
-                        //   _showDialog(context, SimpleFontelicoProgressDialogType.normal,
-                        //       'Normal');
-                        //   Future.delayed(const Duration(milliseconds: 2000), () {
-                        //     // Navigator.pushNamed(context, '/payment_success');
-                        //     BayarFunction(
-                        //       widget.placeidasal,
-                        //       widget.pelabuhanidasal,
-                        //       widget.latitude_pelabuhan_asal,
-                        //       widget.longitude_pelabuhan_asal,
-                        //       widget.jarakasal,
-                        //       widget.waktuasal,
-                        //       widget.namapengirim,
-                        //       widget.notelppengirim,
-                        //       widget.origincontroller,
-                        //       widget.placeidtujuan,
-                        //       widget.pelabuhanidtujuan,
-                        //       widget.latitude_pelabuhan_tujuan,
-                        //       widget.longitude_pelabuhan_tujuan,
-                        //       widget.jaraktujuan,
-                        //       widget.waktutujuan,
-                        //       widget.namapenerima,
-                        //       widget.notelppenerima,
-                        //       widget.destinationcontroller,
-                        //       widget.container_id,
-                        //       widget.nilaibarang_asuransi,
-                        //       widget.harga,
-                        //       widget.qty,
-                        //       widget.jenisbarang,
-                        //       widget.namabarang,
-                        //       widget.keterangantambahan,
-                        //       _selectedpembayaran,
-                        //       globals.loggedinId,
-                        //       widget.notepengirim,
-                        //       widget.notepenerima,
-                        //       isSyarat,
-                        //     );
-                        //   });
-                        // }
-                      },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF5599E9),
-                ),
-                child: const Text(
-                  "Pesan",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Nunito-Medium',
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              );
-            },
+      bottomNavigationBar: BlocProvider(
+        create: (context) => BayarCubit(),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            height: 40.0,
+            padding: const EdgeInsets.only(
+                left: 8.0, bottom: 5.0, top: 0.0, right: 8.0),
+            child: ValueListenableBuilder(
+              valueListenable: _isButtondisabled!,
+              builder: (context, value, index) {
+                return BlocConsumer<BayarCubit, BayarState>(
+                  listener: (context, state) {
+                    if (state is ProceedOrderSuccess) {
+                      Future.delayed(const Duration(seconds: 0), () {
+                        components.dia!.hide();
+                        Navigator.pushReplacementNamed(
+                          context,
+                          '/bayar',
+                          arguments: {
+                            'listOrderBayar': state.listorderBayar,
+                            'param': 'Orderan',
+                          },
+                        );
+                      });
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is ProceedOrderLoading) {
+                      Future.delayed(const Duration(seconds: 0), () {
+                        components.showDia();
+                      });
+                    } else if (state is ProceedOrderFailed) {
+                      Future.delayed(const Duration(seconds: 0), () {
+                        components.dia!.hide();
+                        print(state.message);
+                      });
+                    }
+                    return ElevatedButton(
+                      onPressed: value
+                          ? null
+                          : () async {
+                              BlocProvider.of<BayarCubit>(context)
+                                  .proceedOrder(ProceedOrderParam(
+                                placeidasal,
+                                pelabuhanidasal,
+                                latitude_pelabuhan_asal,
+                                longitude_pelabuhan_asal,
+                                jarakasal,
+                                waktuasal,
+                                namapengirim,
+                                notelppengirim,
+                                origincontroller,
+                                placeidtujuan,
+                                pelabuhanidtujuan,
+                                latitude_pelabuhan_tujuan,
+                                longitude_pelabuhan_tujuan,
+                                waktutujuan,
+                                namapenerima,
+                                notelppenerima,
+                                destinationcontroller,
+                                container_id,
+                                nilaibarang_asuransi,
+                                int.parse(
+                                        harga!.substring(2).replaceAll('.', ''))
+                                    .toString(),
+                                qty,
+                                jenisbarang,
+                                namabarang,
+                                keterangantambahan,
+                                _selectedpembayaran,
+                                sessionManager.getActiveId(),
+                                apiClient.apiKey,
+                                notepengirim,
+                                notepenerima,
+                                "fcmToken",
+                                isSyarat!.value,
+                                sessionManager.getActiveToken(),
+                                merchantId,
+                                merchantPassword,
+                                DateFormat('yyyy-MM-dd HH:mm:ss')
+                                    .format(DateTime.now()),
+                                apiClient.utcTime,
+                              ));
+                              //  && isSyarat != 0
+                              // if (_selectedpembayaran == null) {
+                              //   await globals.alert(context, 'Pembayaran tidak boleh kosong');
+                              // } else if (isSyarat == 0) {
+                              //   await globals.alert(
+                              //       context, 'Mohon menyetujui syarat dan ketentuan');
+                              // } else {
+                              //   // print("asdf");
+                              //   _showDialog(context, SimpleFontelicoProgressDialogType.normal,
+                              //       'Normal');
+                              //   Future.delayed(const Duration(milliseconds: 2000), () {
+                              //     // Navigator.pushNamed(context, '/payment_success');
+                              //     BayarFunction(
+                              //       widget.placeidasal,
+                              //       widget.pelabuhanidasal,
+                              //       widget.latitude_pelabuhan_asal,
+                              //       widget.longitude_pelabuhan_asal,
+                              //       widget.jarakasal,
+                              //       widget.waktuasal,
+                              //       widget.namapengirim,
+                              //       widget.notelppengirim,
+                              //       widget.origincontroller,
+                              //       widget.placeidtujuan,
+                              //       widget.pelabuhanidtujuan,
+                              //       widget.latitude_pelabuhan_tujuan,
+                              //       widget.longitude_pelabuhan_tujuan,
+                              //       widget.jaraktujuan,
+                              //       widget.waktutujuan,
+                              //       widget.namapenerima,
+                              //       widget.notelppenerima,
+                              //       widget.destinationcontroller,
+                              //       widget.container_id,
+                              //       widget.nilaibarang_asuransi,
+                              //       widget.harga,
+                              //       widget.qty,
+                              //       widget.jenisbarang,
+                              //       widget.namabarang,
+                              //       widget.keterangantambahan,
+                              //       _selectedpembayaran,
+                              //       globals.loggedinId,
+                              //       widget.notepengirim,
+                              //       widget.notepenerima,
+                              //       isSyarat,
+                              //     );
+                              //   });
+                              // }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF5599E9),
+                      ),
+                      child: const Text(
+                        "Pesan",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Nunito-Medium',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ),
       ),

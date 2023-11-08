@@ -2,10 +2,17 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:tasorderan/components/components.dart';
 import 'package:tasorderan/core/api_client.dart';
 import 'package:tasorderan/core/session_manager.dart';
+import 'package:tasorderan/models/pdf_models.dart';
+import 'package:tasorderan/models/user_models.dart';
+import 'package:tasorderan/params/bayar_params.dart';
 import 'package:tasorderan/params/pesanan_params.dart';
 import 'package:tasorderan/response/pesanan_response.dart';
+import 'package:tasorderan/response/user_response.dart';
+import 'package:tasorderan/ui/pdf/pdf_sk.dart';
 
 class PesananRepository extends ApiClient {
   final SessionManager sessionManager = SessionManager();
@@ -161,6 +168,131 @@ class PesananRepository extends ApiClient {
       );
       return response.data["lampiran"];
     } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<Map<String, dynamic>> cekStatusPay(ListOrderDetailParam param) async {
+    try {
+      final response = await dio.get(
+        'orderemkl-api/public/api/pesanan/listpesananrow',
+        queryParameters: {
+          'data': jsonEncode(param.toJson()),
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${sessionManager.getActiveToken()}',
+          },
+        ),
+      );
+      return response.data['data'];
+    } on DioError catch (e) {
+      print(e.toString());
+      throw Exception(e.toString());
+    }
+  }
+
+  // Future<String> updateStatusPembayaran(BayarParams param) async {
+  //   try {
+  //     final response = await dio.post('orderemkl-api/public/api/pesanan')
+  //   } on DioError catch (e) {
+  //     throw Exception(e.toString());
+  //   }
+  // }
+
+  Future<SyaratdanKetentuanResponse> generateSyaratKetentuanPDF() async {
+    try {
+      final response = await dio.get(
+        'orderemkl-api/public/api/syaratdanketentuan',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${sessionManager.getActiveToken()}',
+          },
+        ),
+      );
+      return SyaratdanKetentuanResponse.fromJson(response.data['data']);
+    } on DioError catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<Map<String, dynamic>> proceedOrder(ProceedOrderParam param) async {
+    try {
+      final response = await dio.post(
+        'orderemkl-api/public/api/faspay/insertorderfaspay',
+        data: {
+          'data_pembayaran': jsonEncode(param.toJson()),
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${sessionManager.getActiveToken()}',
+          },
+        ),
+      );
+      print(response.data);
+      return response.data;
+    } on DioError catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<void> createPDFSyaratKetentuan(
+      Map<String, dynamic> nobukti,
+      List<String?> listsyaratKetentuan,
+      CreatePdfSyaratParam parameterPDF) async {
+    try {
+      print(listsyaratKetentuan);
+      final syarat = SyaratKetentuan(
+        nama: sessionManager.getActiveName(),
+        nobukti: nobukti['nobukti'],
+        notelp: sessionManager.getActiveTelp(),
+        tanggal: DateFormat('dd MMMM yyyy').format(DateTime.now()),
+        lokmuat: parameterPDF.lokasiMuat,
+        lokbongkar: parameterPDF.lokasiBongkar,
+        harga: parameterPDF.harga,
+        syaratketentuan: listsyaratKetentuan,
+      );
+      final pdfFile = await PdfSKApi.generate(syarat);
+      String buktiPdf = pdfFile.path.split('/').last;
+      FormData formData = FormData.fromMap({
+        "bukti_pdf": await MultipartFile.fromFile(
+          pdfFile.path,
+          filename: buktiPdf,
+        ),
+        'nobukti': nobukti['nobukti'],
+      });
+
+      final response = await dio.post(
+        'orderemkl-api/public/api/syaratdanketentuan/uploadBukti',
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${sessionManager.getActiveToken()}',
+          },
+        ),
+      );
+    } on DioError catch (e) {
+      // print(e.response!.data.toString());
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<ListPesananStatusResponse> getPesananStatus(
+      ListOrderStatusParam param) async {
+    try {
+      final response = await dio.get(
+        'orderemkl-api/public/api/pesanan/getstatusorderan',
+        queryParameters: {
+          'data': jsonEncode(param.toJson()),
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${sessionManager.getActiveToken()}',
+          },
+        ),
+      );
+      return ListPesananStatusResponse.fromJson(response.data['data'][0]);
+    } on DioError catch (e) {
       throw Exception(e.toString());
     }
   }

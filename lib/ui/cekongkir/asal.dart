@@ -385,9 +385,17 @@ class _AsalOngkirState extends State<AsalOngkir> {
                       }
                     },
               child: const Padding(
-                  padding: EdgeInsets.only(
-                      left: 16.0, right: 16.0, top: 12, bottom: 12),
-                  child: Text("Kirim", style: TextStyle(fontSize: 14.0))),
+                padding: EdgeInsets.only(
+                    left: 16.0, right: 16.0, top: 12, bottom: 12),
+                child: Text(
+                  "Kirim",
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             );
           }),
         ),
