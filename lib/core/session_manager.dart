@@ -17,6 +17,7 @@ class SessionManager {
     String? nik,
     String? npwp,
     String? tglLahir,
+    String? alamat,
   ) {
     box.put(AppKey.nameKey, name);
     box.put(AppKey.userKey, user);
@@ -31,6 +32,7 @@ class SessionManager {
     box.put(AppKey.nikKey, nik);
     box.put(AppKey.npwpKey, npwp);
     box.put(AppKey.tglLahirKey, tglLahir);
+    box.put(AppKey.alamatKey, alamat);
   }
 
   String? getActiveName() => box.get(AppKey.nameKey);
@@ -46,6 +48,7 @@ class SessionManager {
   String? getActiveNik() => box.get(AppKey.nikKey);
   String? getActiveNpwp() => box.get(AppKey.npwpKey);
   String? getActiveTglLahir() => box.get(AppKey.tglLahirKey);
+  String? getActiveAlamat() => box.get(AppKey.alamatKey);
 
   bool anyActiveSession() {
     String? activeName = getActiveName();
@@ -61,6 +64,7 @@ class SessionManager {
     String? activeNik = getActiveNik();
     String? activeNpwp = getActiveNpwp();
     String? activeTglLahir = getActiveTglLahir();
+    String? activeAlamat = getActiveAlamat();
     return activeName != null &&
         activeUser != null &&
         activeTelp != null &&
@@ -73,7 +77,8 @@ class SessionManager {
         activeNpwpPath != null &&
         activeNik != null &&
         activeNpwp != null &&
-        activeTglLahir != null;
+        activeTglLahir != null &&
+        activeAlamat != null;
   }
 
   void signout() {
@@ -94,6 +99,7 @@ class SessionManager {
     box.delete(AppKey.nikKey);
     box.delete(AppKey.npwpKey);
     box.delete(AppKey.tglLahirKey);
+    box.delete(AppKey.alamatKey);
   }
 }
 
@@ -116,4 +122,5 @@ class AppKey {
   static const String nikKey = 'NIK_KEY';
   static const String npwpKey = 'NPWP_KEY';
   static const String tglLahirKey = 'TGL_LAHIR_KEY';
+  static const String alamatKey = 'ALAMAT_KEY';
 }

@@ -101,6 +101,7 @@ class AuthRepository extends ApiClient {
 
   Future<File> initializeFile(List<dynamic> imageBytes) async {
     try {
+      debugPrint("Baca Image:  $imageBytes");
       Directory root = await getApplicationDocumentsDirectory();
       String directoryPath = root.path;
       File file =

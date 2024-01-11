@@ -39,6 +39,8 @@ dependencies:
   google_maps_flutter: ^2.5.0
   timeline_tile: ^2.0.0
   # pusher_channels_flutter: ^2.2.0
+  mnc_identifier_ocr: ^1.0.20
+  firebase_messaging: ^14.7.10
 
 dev_dependencies:
   flutter_test:

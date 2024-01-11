@@ -1,7 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,7 +10,25 @@ import 'package:tasorderan/core/session_manager.dart';
 import 'package:tasorderan/params/register_user_params.dart';
 
 class DataVerifikasi extends StatefulWidget {
+  final File? imageFileKtp;
+  final File? imageFileNpwp;
+  final String? nik;
+  final String? nama;
+  final String? alamat;
+  final String? tglLahir;
+  final String? npwp;
+  final int? userId;
+  final bool? isEdit;
   const DataVerifikasi({
+    this.imageFileKtp,
+    this.imageFileNpwp,
+    this.nik,
+    this.nama,
+    this.alamat,
+    this.tglLahir,
+    this.npwp,
+    this.userId,
+    this.isEdit,
     Key? key,
   }) : super(key: key);
 
@@ -31,6 +46,10 @@ class _DataVerifikasiState extends State<DataVerifikasi> {
   final _focusednpwp = FocusNode();
 
   //Data Ktp
+  String? nik;
+  String? name;
+  String? alamat;
+  String? tglLahir;
   ValueNotifier<File>? imageFile_ktp;
   File? ktpPath;
   bool ktp = false;
@@ -42,7 +61,7 @@ class _DataVerifikasiState extends State<DataVerifikasi> {
   final _focusedalamat = FocusNode();
   final _selectednama = TextEditingController();
   final _focusednama = FocusNode();
-  final tgllahir = DateFormat("dd-MM-yyyy").parse("01-01-2004");
+  final tgllahir = DateFormat("yyyy-MM-dd").parse("2006-01-01");
 
   //Param
   bool? isEdit;
@@ -51,6 +70,21 @@ class _DataVerifikasiState extends State<DataVerifikasi> {
 
   void initState() {
     super.initState();
+    // isEdit = widget.isEdit;
+    // if (isEdit == true) {
+    //   imageFile_ktp = ValueNotifier<File>(widget.imageFileKtp!);
+    //   imageFile_npwp = ValueNotifier<File>(widget.imageFileNpwp!);
+    //   _selectednik.text = widget.nik!;
+    //   _selectednama.text = widget.nama!;
+    //   _selectedalamat.text = widget.alamat!;
+    //   _selectedtgllahir.text = widget.tglLahir!;
+    //   _selectednpwp.text = widget.npwp!;
+    // }
+    // print(widget.nik);
+    // _selectednik.text = nik!;
+    // _selectednama.text = name!;
+    // _selectedalamat.text = alamat!;
+    // _selectedtgllahir.text = tglLahir!;
     // _isButtonDisabled = true;
     // if (widget.isEdit == true) {
     //   setState(() {
@@ -259,9 +293,29 @@ class _DataVerifikasiState extends State<DataVerifikasi> {
     final Map<String, dynamic>? args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
     if (args != null) {
-      imageFile_ktp = ValueNotifier<File>(args["imageFile_ktp"]);
-      imageFile_npwp = ValueNotifier<File>(args["imageFile_npwp"]);
+      isEdit = args['isEdit'];
+      if (isEdit == true) {
+        imageFile_ktp = ValueNotifier<File>(args["imageFileKtp"]);
+        imageFile_npwp = ValueNotifier<File>(args["imageFileNpwp"]);
+        _selectednik.text = args["nik"] ?? "";
+        _selectednama.text = args["nama"] ?? "";
+        _selectedalamat.text = args["alamat"] ?? "";
+        _selectedtgllahir.text = args["tglLahir"] ?? "";
+        // _selectedtgllahir.text = DateFormat("dd-MM-yyyy")
+        //     .format(DateFormat("yyyy-MM-dd").parse(args["tglLahir"]));
+        // _selectedtgllahir.text = DateFormat('dd-MM-yyyy')
+        //     .format(DateFormat("yyyy-mm-dd").parse(args["tglLahir"] ?? ""));
+        _selectednpwp.text = args["npwp"] ?? "";
+      } else {
+        imageFile_ktp = ValueNotifier<File>(args["imageFile_ktp"]);
+        imageFile_npwp = ValueNotifier<File>(args["imageFile_npwp"]);
+        _selectednik.text = args["nik"] ?? "";
+        _selectednama.text = args["name"] ?? "";
+        _selectedalamat.text = args["alamat"] ?? "";
+        _selectedtgllahir.text = args["tglLahir"] ?? "";
+      }
     }
+    // print();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF1F1EF),
@@ -282,309 +336,358 @@ class _DataVerifikasiState extends State<DataVerifikasi> {
         create: (context) => VerifikasiCubit(),
         child: Container(
           alignment: Alignment.topCenter,
-          child: ListView(
-            children: [
-              Column(
+          child: BlocConsumer<VerifikasiCubit, VerifikasiState>(
+            listener: (context, state) {
+              print("Sini adalah Baca Listener");
+              if (state is VerifikasiKtpSuccess) {
+                _selectednik.text = state.param['ktp']['nik'] ?? "";
+                _selectednama.text = state.param['ktp']['nama'] ?? "";
+                _selectedalamat.text = state.param['ktp']['alamat'] ?? "";
+                imageFile_ktp!.value = File(state.param['imagePath']);
+                // _selectedtgllahir.text = DateFormat("yyyy-MM-dd").format(
+                //     DateFormat("dd-MM-yyyy").parse(
+                //         state.param['ktp']['tglLahir'] ?? widget.tglLahir));
+              } else if (state is VerifikasiNpwpSuccess) {
+                print("Baca Npwp Listener");
+                imageFile_npwp!.value = File(state.file!.path);
+              } else {
+                debugPrint("gagal");
+              }
+            },
+            builder: (context, state) {
+              return ListView(
                 children: [
-                  const SizedBox(height: 15.0),
-                  const Text("Pengisian Data Diri",
-                      style: TextStyle(
-                          fontFamily: 'Nunito-ExtraBold', fontSize: 18.0)),
-                  const Padding(
-                    padding: EdgeInsets.all(3.0),
-                    child: Text(
-                      'Isi data diri dari NIK, Nama, Alamat sesuai dengan \n KTP, Tgl Lahir, serta no. NPWP, dan mohon di cek \n kembali sebelum menekan tombol submit.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Color(0xFF9F9F9F)),
-                    ),
-                  ),
-                  const SizedBox(height: 15.0),
-                  Container(
-                    padding: const EdgeInsets.only(top: 12.0),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                    ),
-                    child: Form(
-                      key: formKey,
-                      autovalidateMode: AutovalidateMode.always,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 3.0, bottom: 8.0, left: 17.0, right: 17.0),
-                            child: SizedBox(
-                              child: TextFormField(
-                                style: const TextStyle(
-                                  fontSize: 13.0,
-                                ),
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(16),
-                                ],
-                                keyboardType: TextInputType.number,
-                                controller: _selectednik,
-                                focusNode: _focusednik,
-                                textCapitalization:
-                                    TextCapitalization.sentences,
-                                decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.only(left: 15.0),
-                                  border: OutlineInputBorder(),
-                                  hintText: 'NIK',
-                                  hintStyle: TextStyle(
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "KTP Tidak boleh kosong";
-                                  } else if (value.length < 16) {
-                                    return "NIK Wajib 16 Angka";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10.0),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 17.0,
-                              right: 17.0,
-                            ),
-                            child: SizedBox(
-                              child: TextFormField(
-                                style: const TextStyle(
-                                  fontSize: 13.0,
-                                ),
-                                inputFormatters: [
-                                  UpperCaseTextFormatter(),
-                                ],
-                                controller: _selectednama,
-                                focusNode: _focusednama,
-                                textCapitalization:
-                                    TextCapitalization.sentences,
-                                decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.only(left: 15.0),
-                                  border: OutlineInputBorder(),
-                                  hintText: 'Nama',
-                                  hintStyle: TextStyle(
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "Nama tidak boleh kosong";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10.0),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 3.0, bottom: 8.0, left: 17.0, right: 17.0),
-                            child: SizedBox(
-                              child: TextFormField(
-                                style: const TextStyle(
-                                  fontSize: 13.0,
-                                ),
-                                inputFormatters: [
-                                  UpperCaseTextFormatter(),
-                                ],
-                                textCapitalization:
-                                    TextCapitalization.sentences,
-                                controller: _selectedalamat,
-                                focusNode: _focusedalamat,
-                                decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.only(left: 15.0),
-                                  border: OutlineInputBorder(),
-                                  hintText: 'Alamat Detail (Sesuai KTP)',
-                                  hintStyle: TextStyle(
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "Alamat tidak boleh kosong";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 3.0, bottom: 8.0, left: 17.0, right: 17.0),
-                            child: SizedBox(
-                              child: TextFormField(
-                                keyboardType: TextInputType.number,
-                                controller: _selectedtgllahir,
-                                focusNode: _focusedtgllahir,
-                                readOnly: true,
-                                textCapitalization:
-                                    TextCapitalization.sentences,
-                                style: const TextStyle(
-                                  fontSize: 13.0,
-                                ),
-                                decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.only(left: 15.0),
-                                  border: OutlineInputBorder(),
-                                  hintText: 'Tgl Lahir',
-                                  hintStyle: TextStyle(
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                                onTap: () async {
-                                  DateTime? pickedDate = await showDatePicker(
-                                      context: context,
-                                      initialDate: isEdit == true
-                                          ? DateFormat("dd-MM-yyyy").parse(
-                                              DateFormat("dd-MM-yyyy").format(
-                                                  DateFormat("yyyy-MM-dd")
-                                                      .parse(_selectedtgllahir
-                                                          .text)))
-                                          : tgllahir,
-                                      firstDate: DateTime(
-                                          1942), //DateTime.now() - not to allow to choose before today.
-                                      lastDate: DateTime(2005));
-
-                                  if (pickedDate != null) {
-                                    String formattedDate =
-                                        DateFormat('dd-MM-yyyy')
-                                            .format(pickedDate);
-                                    setState(() {
-                                      _selectedtgllahir.text = formattedDate;
-                                    });
-                                  }
-                                },
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "Tgl Lahir tidak boleh kosong";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 3.0, bottom: 8.0, left: 17.0, right: 17.0),
-                            child: SizedBox(
-                              child: TextFormField(
-                                controller: _selectednpwp,
-                                focusNode: _focusednpwp,
-                                inputFormatters: [
-                                  MaskTextInputFormatter(
-                                    mask: "##.###.###.#-###.###",
-                                    type: MaskAutoCompletionType.lazy,
-                                  )
-                                ],
-                                autocorrect: false,
-                                keyboardType: TextInputType.number,
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                style: const TextStyle(
-                                  fontSize: 13.0,
-                                ),
-                                decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.only(left: 15.0),
-                                  border: OutlineInputBorder(),
-                                  hintText: 'NPWP',
-                                  hintStyle: TextStyle(
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "NPWP tidak boleh kosong";
-                                  } else if (value.length < 20) {
-                                    return "NPWP wajib 20 angka";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 3.0, bottom: 8.0, left: 17.0, right: 17.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  children: [
-                                    ValueListenableBuilder(
-                                        valueListenable: imageFile_ktp!,
-                                        builder: (context, value, index) {
-                                          return ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(10.0),
-                                            child: GestureDetector(
-                                              onTap: () {},
-                                              child: CustomPaint(
-                                                child: Hero(
-                                                  tag: 'image1',
-                                                  child: Image.file(
-                                                    value,
-                                                    fit: BoxFit.contain,
-                                                    width: 158,
-                                                    height: 100,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        }),
-                                    if (isEdit == true) ...[
-                                      TextButton(
-                                        onPressed: () async {},
-                                        child: const Text("Edit Foto KTP"),
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    ValueListenableBuilder(
-                                        valueListenable: imageFile_npwp!,
-                                        builder: (context, value, index) {
-                                          return ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(10.0),
-                                            child: GestureDetector(
-                                              onTap: () {},
-                                              child: CustomPaint(
-                                                child: Hero(
-                                                  tag: 'image2',
-                                                  child: Image.file(
-                                                    value,
-                                                    fit: BoxFit.contain,
-                                                    width: 158,
-                                                    height: 100,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        }),
-                                    if (isEdit == true) ...[
-                                      TextButton(
-                                        onPressed: () async {},
-                                        child: const Text("Edit Foto NPWP"),
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                  Column(
+                    children: [
+                      const SizedBox(height: 15.0),
+                      const Text("Pengisian Data Diri",
+                          style: TextStyle(
+                              fontFamily: 'Nunito-ExtraBold', fontSize: 18.0)),
+                      const Padding(
+                        padding: EdgeInsets.all(3.0),
+                        child: Text(
+                          'Isi data diri dari NIK, Nama, Alamat sesuai dengan \n KTP, Tgl Lahir, serta no. NPWP, dan mohon di cek \n kembali sebelum menekan tombol submit.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Color(0xFF9F9F9F)),
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 15.0),
+                      Container(
+                        padding: const EdgeInsets.only(top: 12.0),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                        ),
+                        child: Form(
+                          key: formKey,
+                          autovalidateMode: AutovalidateMode.always,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 3.0,
+                                    bottom: 8.0,
+                                    left: 17.0,
+                                    right: 17.0),
+                                child: SizedBox(
+                                  child: TextFormField(
+                                    style: const TextStyle(
+                                      fontSize: 13.0,
+                                    ),
+                                    inputFormatters: [
+                                      LengthLimitingTextInputFormatter(16),
+                                    ],
+                                    keyboardType: TextInputType.number,
+                                    controller: _selectednik,
+                                    focusNode: _focusednik,
+                                    textCapitalization:
+                                        TextCapitalization.sentences,
+                                    decoration: const InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.only(left: 15.0),
+                                      border: OutlineInputBorder(),
+                                      hintText: 'NIK',
+                                      hintStyle: TextStyle(
+                                        fontSize: 13.0,
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "KTP Tidak boleh kosong";
+                                      } else if (value.length < 16) {
+                                        return "NIK Wajib 16 Angka";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10.0),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 17.0,
+                                  right: 17.0,
+                                ),
+                                child: SizedBox(
+                                  child: TextFormField(
+                                    style: const TextStyle(
+                                      fontSize: 13.0,
+                                    ),
+                                    inputFormatters: [
+                                      UpperCaseTextFormatter(),
+                                    ],
+                                    controller: _selectednama,
+                                    focusNode: _focusednama,
+                                    textCapitalization:
+                                        TextCapitalization.sentences,
+                                    decoration: const InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.only(left: 15.0),
+                                      border: OutlineInputBorder(),
+                                      hintText: 'Nama',
+                                      hintStyle: TextStyle(
+                                        fontSize: 13.0,
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Nama tidak boleh kosong";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10.0),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 3.0,
+                                    bottom: 8.0,
+                                    left: 17.0,
+                                    right: 17.0),
+                                child: SizedBox(
+                                  child: TextFormField(
+                                    style: const TextStyle(
+                                      fontSize: 13.0,
+                                    ),
+                                    inputFormatters: [
+                                      UpperCaseTextFormatter(),
+                                    ],
+                                    textCapitalization:
+                                        TextCapitalization.sentences,
+                                    controller: _selectedalamat,
+                                    focusNode: _focusedalamat,
+                                    decoration: const InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.only(left: 15.0),
+                                      border: OutlineInputBorder(),
+                                      hintText: 'Alamat Detail (Sesuai KTP)',
+                                      hintStyle: TextStyle(
+                                        fontSize: 13.0,
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Alamat tidak boleh kosong";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 3.0,
+                                    bottom: 8.0,
+                                    left: 17.0,
+                                    right: 17.0),
+                                child: SizedBox(
+                                  child: TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    controller: _selectedtgllahir,
+                                    focusNode: _focusedtgllahir,
+                                    readOnly: true,
+                                    textCapitalization:
+                                        TextCapitalization.sentences,
+                                    style: const TextStyle(
+                                      fontSize: 13.0,
+                                    ),
+                                    decoration: const InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.only(left: 15.0),
+                                      border: OutlineInputBorder(),
+                                      hintText: 'Tgl Lahir',
+                                      hintStyle: TextStyle(
+                                        fontSize: 13.0,
+                                      ),
+                                    ),
+                                    onTap: () async {
+                                      DateTime? pickedDate =
+                                          await showDatePicker(
+                                              context: context,
+                                              initialDate: isEdit == true
+                                                  ? DateFormat("yyyy-mm-dd")
+                                                      .parse(_selectedtgllahir
+                                                          .text)
+                                                  : tgllahir,
+                                              firstDate: DateTime(
+                                                  1942), //DateTime.now() - not to allow to choose before today.
+                                              lastDate: DateTime(2006));
+
+                                      if (pickedDate != null) {
+                                        String formattedDate =
+                                            DateFormat('yyyy-MM-dd')
+                                                .format(pickedDate);
+                                        // setState(() {
+                                        _selectedtgllahir.text = formattedDate;
+                                        // });
+                                      }
+                                    },
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Tgl Lahir tidak boleh kosong";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 3.0,
+                                    bottom: 8.0,
+                                    left: 17.0,
+                                    right: 17.0),
+                                child: SizedBox(
+                                  child: TextFormField(
+                                    controller: _selectednpwp,
+                                    focusNode: _focusednpwp,
+                                    inputFormatters: [
+                                      MaskTextInputFormatter(
+                                        mask: "##.###.###.#-###.###",
+                                        type: MaskAutoCompletionType.lazy,
+                                      )
+                                    ],
+                                    autocorrect: false,
+                                    keyboardType: TextInputType.number,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    style: const TextStyle(
+                                      fontSize: 13.0,
+                                    ),
+                                    decoration: const InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.only(left: 15.0),
+                                      border: OutlineInputBorder(),
+                                      hintText: 'NPWP',
+                                      hintStyle: TextStyle(
+                                        fontSize: 13.0,
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "NPWP tidak boleh kosong";
+                                      } else if (value.length < 20) {
+                                        return "NPWP wajib 20 angka";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 3.0,
+                                    bottom: 8.0,
+                                    left: 17.0,
+                                    right: 17.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        ValueListenableBuilder(
+                                            valueListenable: imageFile_ktp!,
+                                            builder: (context, value, index) {
+                                              return ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                                child: GestureDetector(
+                                                  onTap: () {},
+                                                  child: CustomPaint(
+                                                    child: Hero(
+                                                      tag: 'image1',
+                                                      child: Image.file(
+                                                        value,
+                                                        fit: BoxFit.contain,
+                                                        width: 158,
+                                                        height: 100,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                        if (isEdit == true) ...[
+                                          TextButton(
+                                            onPressed: () async {
+                                              context
+                                                  .read<VerifikasiCubit>()
+                                                  .ktpVerifikasi();
+                                            },
+                                            child: const Text("Edit Foto KTP"),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        ValueListenableBuilder(
+                                            valueListenable: imageFile_npwp!,
+                                            builder: (context, value, index) {
+                                              return ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                                child: GestureDetector(
+                                                  onTap: () {},
+                                                  child: CustomPaint(
+                                                    child: Hero(
+                                                      tag: 'image2',
+                                                      child: Image.file(
+                                                        value,
+                                                        fit: BoxFit.contain,
+                                                        width: 158,
+                                                        height: 100,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                        if (isEdit == true) ...[
+                                          TextButton(
+                                            onPressed: () async {
+                                              BlocProvider.of<VerifikasiCubit>(
+                                                      context)
+                                                  .npwpVerifikasi();
+                                            },
+                                            child: const Text("Edit Foto NPWP"),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),
@@ -633,7 +736,7 @@ class _DataVerifikasiState extends State<DataVerifikasi> {
                         _selectednik.text,
                         _selectednama.text,
                         _selectedalamat.text,
-                        DateFormat("dd-MM-yyyy").parse(_selectedtgllahir.text),
+                        DateFormat("yyyy-MM-dd").parse(_selectedtgllahir.text),
                         _selectednpwp.text,
                         SessionManager().getActiveId(),
                       ),

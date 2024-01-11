@@ -16,6 +16,10 @@ class KtpVerifikasi extends StatefulWidget {
 class _KtpVerifikasiState extends State<KtpVerifikasi> {
   ValueNotifier<File>? imageFile_ktp;
   bool ktp = false;
+  String? nik;
+  String? name;
+  String? alamat;
+  String? tglLahir;
 
   @override
   void initState() {
@@ -115,7 +119,14 @@ class _KtpVerifikasiState extends State<KtpVerifikasi> {
         child: BlocConsumer<VerifikasiCubit, VerifikasiState>(
           listener: (context, state) {
             if (state is VerifikasiKtpSuccess) {
-              imageFile_ktp!.value = File(state.file!.path);
+              debugPrint("Baca nik:  ${state.param['ktp']['nik']}");
+              nik = state.param['ktp']['nik'];
+              name = state.param['ktp']['nama'];
+              alamat = state.param['ktp']['alamat'];
+              tglLahir = state.param['ktp']['tglLahir'];
+              imageFile_ktp!.value = File(state.param['imagePath']);
+            } else if (state is VerifikasiKtpFailed) {
+              debugPrint("Gagal");
             }
           },
           builder: (context, state) {
@@ -194,6 +205,10 @@ class _KtpVerifikasiState extends State<KtpVerifikasi> {
                                 '/npwp_verifikasi',
                                 arguments: {
                                   'imageFile_ktp': imageFile_ktp!.value,
+                                  "nik": nik,
+                                  "name": name,
+                                  "alamat": alamat,
+                                  "tglLahir": tglLahir,
                                 },
                               );
                             },

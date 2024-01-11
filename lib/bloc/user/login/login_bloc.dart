@@ -41,6 +41,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         response.user!['nik'],
         response.user!['no_npwp'],
         response.user!['tgl_lahir'],
+        response.user!['alamatdetail'],
       );
       emit(LoginSuccess(response: response));
     } on UserRegisterResponse catch (_) {

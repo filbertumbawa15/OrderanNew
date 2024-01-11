@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tasorderan/bloc/user/verifikasi/verifikasi_cubit.dart';
+import 'package:tasorderan/ui/verifikasi/data_verifikasi.dart';
 
 class NpwpVerifikasi extends StatefulWidget {
   const NpwpVerifikasi({
@@ -16,6 +17,10 @@ class NpwpVerifikasi extends StatefulWidget {
 class _NpwpVerifikasiState extends State<NpwpVerifikasi> {
   ValueNotifier<File>? imageFile_ktp;
   ValueNotifier<File>? imageFile_npwp;
+  String? nik;
+  String? name;
+  String? alamat;
+  String? tglLahir;
 
   @override
   void initState() {
@@ -29,6 +34,10 @@ class _NpwpVerifikasiState extends State<NpwpVerifikasi> {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
     if (args != null) {
       imageFile_ktp = ValueNotifier<File>(args["imageFile_ktp"]);
+      nik = args["nik"];
+      name = args["name"];
+      alamat = args["alamat"];
+      tglLahir = args["tglLahir"];
     }
     return Scaffold(
       appBar: AppBar(
@@ -194,12 +203,28 @@ class _NpwpVerifikasiState extends State<NpwpVerifikasi> {
                           width: MediaQuery.of(context).size.width,
                           child: ElevatedButton(
                             onPressed: () {
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) => DataVerifikasi(
+                              //               imageFileKtp: imageFile_ktp!.value,
+                              //               imageFileNpwp:
+                              //                   imageFile_npwp!.value,
+                              //               nik: nik,
+                              //               name: name,
+                              //               alamat: alamat,
+                              //               tglLahir: tglLahir,
+                              //             )));
                               Navigator.pushNamed(
                                 context,
                                 '/data_verifikasi',
                                 arguments: {
                                   'imageFile_ktp': imageFile_ktp!.value,
                                   'imageFile_npwp': imageFile_npwp!.value,
+                                  "nik": nik,
+                                  "name": name,
+                                  "alamat": alamat,
+                                  "tglLahir": tglLahir,
                                 },
                               );
                             },

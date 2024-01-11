@@ -1,5 +1,3 @@
-import 'package:tasorderan/models/user_models.dart';
-
 class Penerima {
   final String? name;
   final String? notelp;

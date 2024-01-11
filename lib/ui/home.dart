@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:material_dialogs/widgets/buttons/icon_button.dart';
 import 'package:tasorderan/bloc/user/validasi/validasi_bloc.dart';
+import 'package:tasorderan/bloc/user/verifikasi/verifikasi_cubit.dart';
 import 'package:tasorderan/components/components.dart';
 import 'package:tasorderan/core/app_setting/app_setting_bloc.dart';
 import 'package:tasorderan/core/session_manager.dart';
@@ -508,8 +509,15 @@ class _ProfilesState extends State<Profiles>
   Widget build(BuildContext context) {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
-    return BlocProvider(
-      create: (context) => AppSettingBloc()..add(SettingAppEvent()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => AppSettingBloc()..add(SettingAppEvent()),
+        ),
+        BlocProvider(
+          create: (context) => VerifikasiCubit(),
+        ),
+      ],
       child: DefaultTabController(
         length: sessionManager.getActiveId() == null ||
                 sessionManager.getActiveVerification() == "0"
@@ -1006,6 +1014,9 @@ class _ProfilesState extends State<Profiles>
                 color: Colors.white,
               ),
               onPressed: () {
+                context.read<VerifikasiCubit>().editVerifikasi(
+                      route: '/data_verifikasi',
+                    );
                 // return showDialog(
                 //     context: context,
                 //     barrierDismissible: false,

@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -47,6 +49,7 @@ class MyHttpOverrides extends HttpOverrides {
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
+  ApiClient apiClient = ApiClient();
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Hive.initFlutter();
@@ -54,6 +57,9 @@ void main() async {
   if (Platform.isAndroid) {
     AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
   }
+  FirebaseMessaging.instance.getToken().then((newToken) {
+    apiClient.fcmToken = newToken!;
+  });
   runApp(MyApp());
   FlutterNativeSplash.remove();
 }
@@ -79,8 +85,13 @@ class MyApp extends StatelessWidget {
           builder: (context, state) {
         if (state is AppSettingLoading) {
           apiClient.channel!.bind("App\\Events\\UserVerified", (event) async {
-            BlocProvider.of<VerifikasiCubit>(context)
-                .cekVerifikasi(sessionManager.getActiveId()!);
+            final result = jsonDecode(
+                jsonDecode(event!.data!)["message"])['verifikasiuser'];
+            if (result['id'] == sessionManager.getActiveId()) {
+              BlocProvider.of<VerifikasiCubit>(context).cekVerifikasi(
+                  result['keteranganverifikasi'],
+                  sessionManager.getActiveId()!);
+            }
           });
         }
         return BlocConsumer<VerifikasiCubit, VerifikasiState>(

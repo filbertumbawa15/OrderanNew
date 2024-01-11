@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:material_dialogs/widgets/buttons/icon_button.dart';
-import 'package:meta/meta.dart';
+import 'package:mnc_identifier_ocr/mnc_identifier_ocr.dart';
 import 'package:tasorderan/core/session_manager.dart';
 import 'package:tasorderan/main.dart';
 import 'package:tasorderan/params/register_user_params.dart';
 import 'package:tasorderan/repo/auth_repository.dart';
+import 'package:tasorderan/ui/verifikasi/data_verifikasi.dart';
 
 part 'verifikasi_state.dart';
 
@@ -20,16 +20,20 @@ class VerifikasiCubit extends Cubit<VerifikasiState> {
 
   void ktpVerifikasi() async {
     try {
-      final response =
-          await navigatorKey.currentState?.pushNamed('/camera_verifikasi');
-      if (response == null) {
-        VerifikasiKtpFailed();
-      } else {
-        Map<String, dynamic> dataFile = jsonDecode(jsonEncode(response));
-        final getFile =
-            await authRepository.initializeFile(dataFile["croppedImage"]);
-        emit(VerifikasiKtpSuccess(getFile));
-      }
+      // final response =
+      //     await navigatorKey.currentState?.pushNamed('/camera_verifikasi');
+      final response = await MncIdentifierOcr.startCaptureKtp(
+          withFlash: true, cameraOnly: true);
+      debugPrint("Baca getFile:  ${response.toMap()}");
+      // if (response == null) {
+      //   emit(VerifikasiKtpFailed());
+      // } else {
+      Map<String, dynamic> dataFile = response.toMap();
+      // final getFile =
+      //     await authRepository.initializeFile(dataFile["imagePath"]);
+      debugPrint("Baca getFile:  $dataFile");
+      emit(VerifikasiKtpSuccess(dataFile));
+      // }
     } catch (e) {
       emit(VerifikasiKtpFailed());
     }
@@ -63,7 +67,7 @@ class VerifikasiCubit extends Cubit<VerifikasiState> {
         response["foto_npwp"].toString(),
       );
       sessionManager.setSession(
-        sessionManager.getActiveName(),
+        response["name"].toString(),
         sessionManager.getActiveUser(),
         sessionManager.getActiveTelp(),
         sessionManager.getActiveId(),
@@ -76,6 +80,7 @@ class VerifikasiCubit extends Cubit<VerifikasiState> {
         response["nik"].toString(),
         response["no_npwp"].toString(),
         response["tgl_lahir"].toString(),
+        response["alamatdetail"].toString(),
       );
       emit(VerifikasiSuccess());
     } catch (e) {
@@ -83,7 +88,7 @@ class VerifikasiCubit extends Cubit<VerifikasiState> {
     }
   }
 
-  void cekVerifikasi(int id) async {
+  void cekVerifikasi(String param, int id) async {
     try {
       emit(VerifikasiCekLoading());
       final response = await authRepository.cekVerification(id);
@@ -94,7 +99,7 @@ class VerifikasiCubit extends Cubit<VerifikasiState> {
         response["foto_npwp"].toString(),
       );
       sessionManager.setSession(
-        sessionManager.getActiveName(),
+        response["name"].toString(),
         sessionManager.getActiveUser(),
         sessionManager.getActiveTelp(),
         sessionManager.getActiveId(),
@@ -107,11 +112,12 @@ class VerifikasiCubit extends Cubit<VerifikasiState> {
         response["nik"].toString(),
         response["no_npwp"].toString(),
         response["tgl_lahir"].toString(),
+        response["alamatdetail"].toString(),
       );
       if (response["statusverifikasi"] == "14") {
         emit(VerifikasiCekSuccess(
           message:
-              'Maaf, data akun anda masih ditolak oleh kami. Silahkan cek kembali dan ajukan agar kami dapat mengecek kembali.',
+              'Data anda ditolak karena tidak memenuhi syarat, silahkan lakukan verifikasi data sekali lagi. \n\nKeterangan : ${param.toLowerCase()}',
           title: 'Verifikasi Akun Ditolak',
           path: 'assets/imgs/user-denied.json',
           action: IconsButton(
@@ -145,6 +151,44 @@ class VerifikasiCubit extends Cubit<VerifikasiState> {
       }
     } catch (e) {
       emit(VerifikasiCekFailed());
+    }
+  }
+
+  void editVerifikasi({@required String? route, bool? isEdit}) async {
+    try {
+      emit(EditVerifikasiLoading());
+      Object param = {
+        'imageFileKtp': File(sessionManager.getKtpPath()!),
+        'imageFileNpwp': File(sessionManager.getNpwpPath()!),
+        'nik': sessionManager.getActiveNik(),
+        'nama': sessionManager.getActiveName(),
+        'alamat': sessionManager.getActiveAlamat(),
+        'tglLahir': sessionManager.getActiveTglLahir(),
+        'npwp': sessionManager.getActiveNpwp(),
+        'userId': sessionManager.getActiveId(),
+        'isEdit': true,
+      };
+      final response =
+          await navigatorKey.currentState?.pushNamed(route!, arguments: param);
+      // final response = await navigatorKey.currentState?.push(MaterialPageRoute(
+      //     builder: (context) => DataVerifikasi(
+      //           imageFileKtp: File(sessionManager.getKtpPath()!),
+      //           imageFileNpwp: File(sessionManager.getNpwpPath()!),
+      //           nik: sessionManager.getActiveNik(),
+      //           nama: sessionManager.getActiveName(),
+      //           alamat: sessionManager.getActiveAlamat(),
+      //           tglLahir: sessionManager.getActiveTglLahir(),
+      //           npwp: sessionManager.getActiveNpwp(),
+      //           userId: sessionManager.getActiveId(),
+      //           isEdit: true,
+      //         )));
+      if (response == null) {
+        emit(EditVerifikasiFailed());
+      } else {
+        emit(EditVerifikasiSuccess(response));
+      }
+    } catch (e) {
+      emit(EditVerifikasiFailed());
     }
   }
 }

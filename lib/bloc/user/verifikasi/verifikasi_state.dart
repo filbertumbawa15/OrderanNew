@@ -31,8 +31,9 @@ final class VerifikasiCekFailed extends VerifikasiState {}
 
 //Ktp
 final class VerifikasiKtpSuccess extends VerifikasiState {
-  final File? file;
-  VerifikasiKtpSuccess(this.file);
+  // final File? file;
+  final Map<String, dynamic> param;
+  VerifikasiKtpSuccess(this.param);
 }
 
 final class VerifikasiKtpFailed extends VerifikasiState {}
@@ -44,3 +45,13 @@ final class VerifikasiNpwpSuccess extends VerifikasiState {
 }
 
 final class VerifikasiNpwpFailed extends VerifikasiState {}
+
+//Navigator(Edit Verifikasi)
+final class EditVerifikasiLoading extends VerifikasiState {}
+
+final class EditVerifikasiSuccess extends VerifikasiState {
+  final Object? result;
+  EditVerifikasiSuccess(this.result);
+}
+
+final class EditVerifikasiFailed extends VerifikasiState {}
