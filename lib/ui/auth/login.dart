@@ -317,8 +317,8 @@ class _LoginState extends State<Login> {
                                   ),
                                 ),
                                 onTap: () {
-                                  // Navigator.of(context).pushReplacement(
-                                  //     globals.createRoute(ForgotPassword()));
+                                  Navigator.pushReplacementNamed(
+                                      context, '/forgot');
                                 },
                               ),
                             ],

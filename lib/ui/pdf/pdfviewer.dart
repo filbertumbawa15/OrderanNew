@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 
 class PdfViewerPage extends StatefulWidget {
   final File? pdfUrl;
@@ -25,6 +24,9 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
           "PDF Viewer",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
+        actions: [
+          const Icon(Icons.download),
+        ],
       ),
       backgroundColor: const Color(0xFF747474),
       body: Center(

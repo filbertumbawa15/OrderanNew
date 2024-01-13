@@ -41,6 +41,8 @@ dependencies:
   # pusher_channels_flutter: ^2.2.0
   mnc_identifier_ocr: ^1.0.20
   firebase_messaging: ^14.7.10
+  firebase_core: ^2.24.2
+  cloud_firestore: ^4.14.0
 
 dev_dependencies:
   flutter_test:

@@ -83,3 +83,14 @@ class ListPesananStatusResponse {
     );
   }
 }
+
+class ListQtyOrderResponse {
+  List<ListQtyModels> listQtyOrder = [];
+
+  ListQtyOrderResponse.fromJson(json) {
+    for (int i = 0; i < json.length; i++) {
+      ListQtyModels qtyOrder = ListQtyModels.fromJson(json[i]);
+      listQtyOrder.add(qtyOrder);
+    }
+  }
+}

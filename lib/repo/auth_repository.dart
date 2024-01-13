@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:tasorderan/core/api_client.dart';
 import 'package:tasorderan/core/session_manager.dart';
 import 'package:tasorderan/params/register_user_params.dart';
+import 'package:tasorderan/response/home_response.dart';
 import 'package:tasorderan/response/user_response.dart';
 
 class AuthRepository extends ApiClient {
@@ -163,6 +164,38 @@ class AuthRepository extends ApiClient {
       return response.data["data"];
     } on DioError catch (e) {
       throw Exception(e.toString());
+    }
+  }
+
+  Future<NotificationsResponse> listNotification() async {
+    try {
+      final response = await dio.get(
+        'orderemkl-api/public/api/notifications',
+        queryParameters: {
+          'userid': sessionManager.getActiveId() ?? 0,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${sessionManager.getActiveToken()}',
+          },
+        ),
+      );
+      return NotificationsResponse.fromJson(response.data['data']);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<ForgotPasswordResponse> forgotPassword(
+      ForgotPasswordParam param) async {
+    try {
+      final response = await dio.post(
+          'orderemkl-api/public/api/forgot-password',
+          data: jsonEncode(param.toJson()));
+      // debugPrint("Response Status Code : ${response.statusCode}");
+      return ForgotPasswordResponse.fromJson(response.data);
+    } catch (e) {
+      throw Exception(e);
     }
   }
 }

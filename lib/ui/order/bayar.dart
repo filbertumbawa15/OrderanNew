@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasorderan/bloc/pesanan/pesanan/bayar/bayar_cubit.dart';
+import 'package:tasorderan/components/components.dart';
 import 'package:tasorderan/core/api_client.dart';
 // import 'package:flutter/services.dart';
 // import 'package:intl/intl.dart';
@@ -47,8 +48,8 @@ class _BayarState extends State<Bayar> {
   String? nobukti;
 
   BayarCubit cubit = BayarCubit();
-
   final apiClient = ApiClient();
+  final components = Tools();
 
   @override
   void initState() {
@@ -318,12 +319,17 @@ class _BayarState extends State<Bayar> {
         body: BlocConsumer<BayarCubit, BayarState>(
           listener: (context, state) {
             if (state is BayarComplete) {
-              print("Langsung navigasi ke halaman success pay");
+              Future.delayed(const Duration(seconds: 0), () {
+                components.dia!.hide();
+                Navigator.pushNamed(context, '/success_pay');
+              });
             }
           },
           builder: (context, state) {
             if (state is BayarLoading) {
-              print("Munculkan dialog loading");
+              Future.delayed(const Duration(seconds: 0), () {
+                components.showDia();
+              });
             } else if (state is BayarFailed) {
               print("Gagalkan ke success pay, cek gagalnya apaan");
             }

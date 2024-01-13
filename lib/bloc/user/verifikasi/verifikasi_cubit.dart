@@ -81,6 +81,7 @@ class VerifikasiCubit extends Cubit<VerifikasiState> {
         response["no_npwp"].toString(),
         response["tgl_lahir"].toString(),
         response["alamatdetail"].toString(),
+        sessionManager.getActiveFcmToken(),
       );
       emit(VerifikasiSuccess());
     } catch (e) {
@@ -113,6 +114,7 @@ class VerifikasiCubit extends Cubit<VerifikasiState> {
         response["no_npwp"].toString(),
         response["tgl_lahir"].toString(),
         response["alamatdetail"].toString(),
+        sessionManager.getActiveFcmToken(),
       );
       if (response["statusverifikasi"] == "14") {
         emit(VerifikasiCekSuccess(

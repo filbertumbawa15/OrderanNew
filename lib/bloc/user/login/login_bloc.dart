@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:tasorderan/core/api_client.dart';
 import 'package:tasorderan/core/session_manager.dart';
 import 'package:tasorderan/params/register_user_params.dart';
 import 'package:tasorderan/repo/auth_repository.dart';
@@ -10,6 +11,7 @@ part 'login_state.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final authRepository = AuthRepository();
   final sessionManager = SessionManager();
+  final apiClient = ApiClient();
   LoginBloc() : super(LoginInitial()) {
     on<LoginUserEvent>(_loginUser);
   }
@@ -19,6 +21,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     final params = LoginParam(
       event.email,
       event.password,
+      apiClient.fcmToken,
     );
     emit(LoginLoading());
     try {
@@ -42,6 +45,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         response.user!['no_npwp'],
         response.user!['tgl_lahir'],
         response.user!['alamatdetail'],
+        response.user!['fcm_token'],
       );
       emit(LoginSuccess(response: response));
     } on UserRegisterResponse catch (_) {

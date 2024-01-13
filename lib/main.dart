@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +13,8 @@ import 'package:tasorderan/components/components.dart';
 import 'package:tasorderan/core/api_client.dart';
 import 'package:tasorderan/core/app_setting/app_setting_bloc.dart';
 import 'package:tasorderan/core/session_manager.dart';
+import 'package:tasorderan/ui/auth/email_verification.dart';
+import 'package:tasorderan/ui/auth/forgot.dart';
 import 'package:tasorderan/ui/auth/login.dart';
 import 'package:tasorderan/ui/auth/otp.dart';
 import 'package:tasorderan/ui/auth/register.dart';
@@ -19,17 +22,22 @@ import 'package:tasorderan/ui/cekongkir/asal.dart';
 import 'package:tasorderan/ui/cekongkir/harga.dart';
 import 'package:tasorderan/ui/cekongkir/ongkir.dart';
 import 'package:tasorderan/ui/cekongkir/tujuan.dart';
+import 'package:tasorderan/ui/faq.dart';
 import 'package:tasorderan/ui/favorites_list.dart';
 import 'package:tasorderan/ui/home.dart';
+import 'package:tasorderan/ui/notifications.dart';
 import 'package:tasorderan/ui/order/asal_order.dart';
 import 'package:tasorderan/ui/order/bayar.dart';
 import 'package:tasorderan/ui/order/list_order.dart';
 import 'package:tasorderan/ui/order/list_status_pesanan.dart';
+import 'package:tasorderan/ui/order/listqty.dart';
 import 'package:tasorderan/ui/order/order.dart';
 import 'package:tasorderan/ui/order/payment_success.dart';
+import 'package:tasorderan/ui/order/success_pay.dart';
 import 'package:tasorderan/ui/order/total.dart';
 import 'package:tasorderan/ui/order/tujuan_order.dart';
 import 'package:tasorderan/ui/pdf/pdfviewer.dart';
+import 'package:tasorderan/ui/syaratketentuan.dart';
 import 'package:tasorderan/ui/verifikasi/camera_verifikasi.dart';
 import 'package:tasorderan/ui/verifikasi/data_verifikasi.dart';
 import 'package:tasorderan/ui/verifikasi/home_verifikasi.dart';
@@ -46,20 +54,32 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling background message ${message.messageId}");
+}
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
-  ApiClient apiClient = ApiClient();
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Hive.initFlutter();
   await Hive.openBox('session');
+  Platform.isAndroid
+      ? await Firebase.initializeApp(
+          options: const FirebaseOptions(
+          apiKey: 'AIzaSyCMWlglXoeJQkVSSHOG-yafRy3bIRZRDpc',
+          appId: '1:211359382597:android:fc4aa5905b5cd35ac6b72c',
+          messagingSenderId: '211359382597',
+          projectId: 'chatapp-a53e3',
+        ))
+      : await Firebase.initializeApp();
+  await FirebaseMessaging.instance.getInitialMessage();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   if (Platform.isAndroid) {
     AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
   }
-  FirebaseMessaging.instance.getToken().then((newToken) {
-    apiClient.fcmToken = newToken!;
-  });
   runApp(MyApp());
   FlutterNativeSplash.remove();
 }
@@ -68,8 +88,11 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   final sessionManager = SessionManager();
+
   final apiClient = ApiClient();
+
   final components = Tools();
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -99,7 +122,6 @@ class MyApp extends StatelessWidget {
             if (state is VerifikasiCekSuccess) {
               Future.delayed(const Duration(seconds: 0), () {
                 components.dia!.hide();
-                print("berhasil");
                 components.alertBerhasilPesan(
                     state.message!, state.title!, state.path!, state.action!);
               });
@@ -109,7 +131,6 @@ class MyApp extends StatelessWidget {
             if (state is VerifikasiCekFailed) {
               Future.delayed(const Duration(seconds: 0), () {
                 components.dia!.hide();
-                print("gagal cokkk");
               });
             } else if (state is VerifikasiCekLoading) {
               Future.delayed(const Duration(seconds: 0), () {
@@ -139,7 +160,7 @@ class MyApp extends StatelessWidget {
                   // "/asal_ongkir": (BuildContext context) => new Asal_Ongkir(),
                   // "/tujuan_ongkir": (BuildContext context) => new Tujuan_Ongkir(),
                   "/login": (BuildContext context) => const Login(),
-                  "/register": (BuildContext context) => Register(),
+                  "/register": (BuildContext context) => const Register(),
                   "/total": (BuildContext context) => const Total(),
                   "/bayar": (BuildContext context) => const Bayar(),
                   "/otp_verification": (BuildContext context) =>
@@ -150,12 +171,13 @@ class MyApp extends StatelessWidget {
                   "/list_status_pesanan": (BuildContext context) =>
                       const ListStatusPesanan(),
                   // "/chats": (BuildContext context) => new Chats(),
-                  // "/syaratdanketentuan": (BuildContext context) =>
-                  //     new SyaratKetentuanWidget(),
-                  // "/faq": (BuildContext context) => new Faq(),
+                  "/syaratdanketentuan": (BuildContext context) =>
+                      const SyaratKetentuanWidget(),
+                  "/faq": (BuildContext context) => const Faq(),
                   "/favoritesList": (BuildContext context) =>
                       const FavoritesList(),
-                  // "/notifications": (BuildContext context) => new Notifications(),
+                  "/notifications": (BuildContext context) =>
+                      const Notifications(),
                   // "/homeverifikasi": (BuildContext context) => new HomeVerifikasi(),
                   "/pdfviewer": (BuildContext context) => const PdfViewerPage(),
                   "/asal": (BuildContext context) => const AsalOngkir(),
@@ -174,6 +196,11 @@ class MyApp extends StatelessWidget {
                       const DataVerifikasi(),
                   "/waiting_verifikasi": (BuildContext context) =>
                       const WaitingVerifikasi(),
+                  "/success_pay": (BuildContext context) => const SuccessPay(),
+                  "/forgot": (BuildContext context) => const ForgotPassword(),
+                  "/email_verification": (BuildContext context) =>
+                      const EmailVerification(),
+                  "/list_qty": (BuildContext context) => const ListQty(),
                 });
           },
         );

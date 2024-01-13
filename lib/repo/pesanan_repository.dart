@@ -280,6 +280,7 @@ class PesananRepository extends ApiClient {
   Future<ListPesananStatusResponse> getPesananStatus(
       ListOrderStatusParam param) async {
     try {
+      print(param.toJson());
       final response = await dio.get(
         'orderemkl-api/public/api/pesanan/getstatusorderan',
         queryParameters: {
@@ -292,6 +293,23 @@ class PesananRepository extends ApiClient {
         ),
       );
       return ListPesananStatusResponse.fromJson(response.data['data'][0]);
+    } on DioError catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<ListQtyOrderResponse> getListQty(ListQtyOrderParam param) async {
+    try {
+      final response = await dio.get(
+        'orderemkl-api/public/api/pesanan/getListjob',
+        queryParameters: {
+          'data': jsonEncode(param.toJson()),
+        },
+        options: Options(headers: {
+          'Authorization': 'Bearer ${sessionManager.getActiveToken()}',
+        }),
+      );
+      return ListQtyOrderResponse.fromJson(response.data['data']);
     } on DioError catch (e) {
       throw Exception(e.toString());
     }

@@ -350,3 +350,28 @@ class StatusBarang {
         gambar: json["status"]["gambar"],
       );
 }
+
+class ListQtyModels {
+  String? trxId;
+  String? qty;
+  String? jobemkl;
+  String? nocont;
+  String? nobukti;
+
+  ListQtyModels({
+    this.trxId,
+    this.qty,
+    this.jobemkl,
+    this.nocont,
+    this.nobukti,
+  });
+
+  // FORMAT TO JSON
+  factory ListQtyModels.fromJson(Map<String, dynamic> json) => ListQtyModels(
+        trxId: json["trx_id"],
+        qty: json["qty"],
+        jobemkl: json["jobemkl"],
+        nocont: json["nocont"],
+        nobukti: json["nobukti"],
+      );
+}

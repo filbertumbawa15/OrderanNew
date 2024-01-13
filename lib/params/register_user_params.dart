@@ -53,12 +53,14 @@ class CheckOtpParam {
 class LoginParam {
   String? email;
   String? password;
+  String? fcmToken;
 
-  LoginParam(this.email, this.password);
+  LoginParam(this.email, this.password, this.fcmToken);
   Map<String, dynamic> toJson() {
     return {
       "email": email,
       "password": password,
+      "fcm_token": fcmToken,
     };
   }
 }
@@ -94,6 +96,17 @@ class VerifikasiUserParam {
       "tgl_lahir": tgl_lahir,
       "no_npwp": no_npwp,
       "user_id": user_id,
+    };
+  }
+}
+
+class ForgotPasswordParam {
+  String? email;
+
+  ForgotPasswordParam(this.email);
+  Map<String, dynamic> toJson() {
+    return {
+      "email": email,
     };
   }
 }

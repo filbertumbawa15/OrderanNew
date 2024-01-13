@@ -277,11 +277,17 @@ class _PaymentSuccessState extends State<PaymentSuccess> {
                 const SizedBox(width: 15.0),
                 InkWell(
                   onTap: () async {
-                    Navigator.pushNamed(context, '/list_status_pesanan',
-                        arguments: {
-                          'nobukti': nobukti,
-                          'qty': int.parse(qty!),
-                        });
+                    if (int.parse(qty!) > 1) {
+                      Navigator.pushNamed(context, '/list_qty', arguments: {
+                        'nobukti': nobukti,
+                      });
+                    } else {
+                      Navigator.pushNamed(context, '/list_status_pesanan',
+                          arguments: {
+                            'nobukti': nobukti,
+                            'qty': int.parse(qty!),
+                          });
+                    }
                     // if (int.parse(widget.qty) > 1) {
                     //   _showDialog(context,
                     //       SimpleFontelicoProgressDialogType.normal, 'Normal');

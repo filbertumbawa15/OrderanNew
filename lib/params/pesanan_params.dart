@@ -302,3 +302,15 @@ class CreatePdfSyaratParam {
     };
   }
 }
+
+class ListQtyOrderParam {
+  String? nobukti;
+
+  ListQtyOrderParam(this.nobukti);
+
+  Map<String, dynamic> toJson() {
+    return {
+      'nobukti': nobukti,
+    };
+  }
+}

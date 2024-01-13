@@ -18,6 +18,7 @@ class SessionManager {
     String? npwp,
     String? tglLahir,
     String? alamat,
+    String? fcmToken,
   ) {
     box.put(AppKey.nameKey, name);
     box.put(AppKey.userKey, user);
@@ -33,6 +34,7 @@ class SessionManager {
     box.put(AppKey.npwpKey, npwp);
     box.put(AppKey.tglLahirKey, tglLahir);
     box.put(AppKey.alamatKey, alamat);
+    box.put(AppKey.fcmTokenKey, fcmToken);
   }
 
   String? getActiveName() => box.get(AppKey.nameKey);
@@ -49,6 +51,7 @@ class SessionManager {
   String? getActiveNpwp() => box.get(AppKey.npwpKey);
   String? getActiveTglLahir() => box.get(AppKey.tglLahirKey);
   String? getActiveAlamat() => box.get(AppKey.alamatKey);
+  String? getActiveFcmToken() => box.get(AppKey.fcmTokenKey);
 
   bool anyActiveSession() {
     String? activeName = getActiveName();
@@ -65,20 +68,22 @@ class SessionManager {
     String? activeNpwp = getActiveNpwp();
     String? activeTglLahir = getActiveTglLahir();
     String? activeAlamat = getActiveAlamat();
+    String? activeFcmToken = getActiveFcmToken();
     return activeName != null &&
         activeUser != null &&
         activeTelp != null &&
-        activeId != null &&
-        activeVerification != null &&
+        // activeId != null &&
+        // activeVerification != null &&
         activeEmail != null &&
         activePasword != null &&
         activeToken != null &&
-        activeKtpPath != null &&
-        activeNpwpPath != null &&
-        activeNik != null &&
-        activeNpwp != null &&
-        activeTglLahir != null &&
-        activeAlamat != null;
+        // activeKtpPath != null &&
+        // activeNpwpPath != null &&
+        // activeNik != null &&
+        // activeNpwp != null &&
+        // activeTglLahir != null &&
+        // activeAlamat != null &&
+        activeFcmToken != null;
   }
 
   void signout() {
@@ -100,6 +105,7 @@ class SessionManager {
     box.delete(AppKey.npwpKey);
     box.delete(AppKey.tglLahirKey);
     box.delete(AppKey.alamatKey);
+    box.delete(AppKey.fcmTokenKey);
   }
 }
 
@@ -123,4 +129,5 @@ class AppKey {
   static const String npwpKey = 'NPWP_KEY';
   static const String tglLahirKey = 'TGL_LAHIR_KEY';
   static const String alamatKey = 'ALAMAT_KEY';
+  static const String fcmTokenKey = 'FCMTOKEN_KEY';
 }
