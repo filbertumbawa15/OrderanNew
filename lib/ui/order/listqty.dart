@@ -13,6 +13,8 @@ class ListQty extends StatefulWidget {
 
 class _ListQtyState extends State<ListQty> {
   String? nobukti;
+
+  @override
   void initState() {
     super.initState();
   }
@@ -57,103 +59,107 @@ class _ListQtyState extends State<ListQty> {
           onRefresh: () async {},
           child:
               BlocBuilder<ListqtyBloc, ListqtyState>(builder: (context, state) {
-            return ListView.builder(
-              itemCount: 2,
-              itemBuilder: (context, i) {
-                return Card(
-                  child: ListTile(
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'No. Job: ',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                            color: Color.fromARGB(255, 7, 3, 3),
+            if (state is ListQtyLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is ListQtyFailed) {
+              return Center(
+                child: Text(state.message),
+              );
+            } else if (state is ListQtySuccess) {
+              return ListView.builder(
+                itemCount: state.result.length,
+                itemBuilder: (context, i) {
+                  return Card(
+                    child: ListTile(
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'No. Job: ',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600,
+                              color: Color.fromARGB(255, 7, 3, 3),
+                            ),
                           ),
-                        ),
-                        Text(
-                          // data.dataqty[i].jobemkl,
-                          'asdf',
-                          style: const TextStyle(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w600,
-                            color: Color.fromARGB(255, 7, 3, 3),
+                          Text(
+                            state.result[i].jobemkl!,
+                            style: const TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                              color: Color.fromARGB(255, 7, 3, 3),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 10.0),
-                        const Text(
-                          'No. Container: ',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                            color: Color.fromARGB(255, 7, 3, 3),
+                          const SizedBox(height: 10.0),
+                          const Text(
+                            'No. Container: ',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600,
+                              color: Color.fromARGB(255, 7, 3, 3),
+                            ),
                           ),
-                        ),
-                        Text(
-                          // data.dataqty[i].nocont,
-                          'asdf',
-                          style: const TextStyle(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w600,
-                            color: Color.fromARGB(255, 7, 3, 3),
+                          Text(
+                            state.result[i].nocont!,
+                            style: const TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                              color: Color.fromARGB(255, 7, 3, 3),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 15.0),
-                        Text(
-                          'No. Pesanan:',
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            color: Colors.grey[600],
+                        ],
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 15.0),
+                          Text(
+                            'No. Pesanan:',
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              color: Colors.grey[600],
+                            ),
                           ),
-                        ),
-                        Text(
-                          // data.dataqty[i].nobukti,
-                          'asdf',
-                          style: const TextStyle(
-                            fontSize: 14.0,
+                          Text(
+                            state.result[i].nobukti!,
+                            style: const TextStyle(
+                              fontSize: 14.0,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    trailing: Padding(
-                      padding: const EdgeInsets.only(top: 8.0, left: 15.0),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => Tracking(
-                          //               kode_container:
-                          //                   data.dataqty[i].nocont,
-                          //               nobukti: data.dataqty[i].nobukti,
-                          //               qty: data.dataqty[i].qty,
-                          //               jobemkl: data.dataqty[i].jobemkl,
-                          //             )));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.only(
-                              left: 1, right: 1, top: 1, bottom: 1),
-                          backgroundColor: const Color(0xFFB7B7B7),
-                          elevation: 0,
-                          shape: const CircleBorder(),
-                        ),
-                        child: const Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          size: 15,
+                        ],
+                      ),
+                      trailing: Padding(
+                        padding: const EdgeInsets.only(top: 8.0, left: 15.0),
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            Navigator.pushNamed(context, '/list_status_pesanan',
+                                arguments: {
+                                  'nobukti': state.result[i].nobukti!,
+                                  'qty': int.parse(state.result[i].qty!),
+                                  'jobemkl': state.result[i].jobemkl!,
+                                });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.only(
+                                left: 1, right: 1, top: 1, bottom: 1),
+                            backgroundColor: const Color(0xFFB7B7B7),
+                            elevation: 0,
+                            shape: const CircleBorder(),
+                          ),
+                          child: const Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 15,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
-            );
+                  );
+                },
+              );
+            }
+            return Container();
           }),
         ),
       ),

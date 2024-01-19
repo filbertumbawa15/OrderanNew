@@ -4,7 +4,6 @@ part of 'bayar_cubit.dart';
 abstract class BayarState extends Equatable {
   final Duration? elapsed;
   const BayarState(this.elapsed);
-
   @override
   List<Object?> get props => [elapsed];
 }

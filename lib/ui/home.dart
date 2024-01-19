@@ -1235,7 +1235,7 @@ class _SettingsState extends State<Settings> {
                   color: Color(0xFF313131),
                 ),
                 onTap: () {
-                  Navigator.pushNamed(context, '/chats');
+                  Navigator.pushNamed(context, '/hubungi_kami');
                 }),
             ListTile(
               title: const Text(

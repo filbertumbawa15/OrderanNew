@@ -25,6 +25,8 @@ import 'package:tasorderan/ui/cekongkir/tujuan.dart';
 import 'package:tasorderan/ui/faq.dart';
 import 'package:tasorderan/ui/favorites_list.dart';
 import 'package:tasorderan/ui/home.dart';
+import 'package:tasorderan/ui/hubung_detail.dart';
+import 'package:tasorderan/ui/hubungikami.dart';
 import 'package:tasorderan/ui/notifications.dart';
 import 'package:tasorderan/ui/order/asal_order.dart';
 import 'package:tasorderan/ui/order/bayar.dart';
@@ -60,6 +62,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+String fcmToken = "";
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -69,13 +72,13 @@ void main() async {
   Platform.isAndroid
       ? await Firebase.initializeApp(
           options: const FirebaseOptions(
-          apiKey: 'AIzaSyCMWlglXoeJQkVSSHOG-yafRy3bIRZRDpc',
-          appId: '1:211359382597:android:fc4aa5905b5cd35ac6b72c',
-          messagingSenderId: '211359382597',
-          projectId: 'chatapp-a53e3',
+          apiKey: 'AIzaSyBUbvVC5NnXpAF0Oet2MJQKcCCEHxFkNd8',
+          appId: '1:725352137575:android:50e25ebe059210fc3fa5c2',
+          messagingSenderId: '725352137575',
+          projectId: 'chat-app-project-b6130',
         ))
       : await Firebase.initializeApp();
-  await FirebaseMessaging.instance.getInitialMessage();
+  // await FirebaseMessaging.instance.getInitialMessage();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   if (Platform.isAndroid) {
     AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
@@ -84,14 +87,25 @@ void main() async {
   FlutterNativeSplash.remove();
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   final sessionManager = SessionManager();
-
   final apiClient = ApiClient();
-
   final components = Tools();
+
+  @override
+  void initState() {
+    FirebaseMessaging.instance.getToken().then((newToken) {
+      fcmToken = newToken!;
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +184,10 @@ class MyApp extends StatelessWidget {
                   "/list_order": (BuildContext context) => const ListOrder(),
                   "/list_status_pesanan": (BuildContext context) =>
                       const ListStatusPesanan(),
-                  // "/chats": (BuildContext context) => new Chats(),
+                  "/hubungi_kami": (BuildContext context) =>
+                      const HubungiKami(),
+                  "/hubungi_kami_detail": (BuildContext context) =>
+                      const HubungiKamiDetail(),
                   "/syaratdanketentuan": (BuildContext context) =>
                       const SyaratKetentuanWidget(),
                   "/faq": (BuildContext context) => const Faq(),

@@ -16,6 +16,7 @@ class ListStatusPesanan extends StatefulWidget {
 class _ListStatusPesananState extends State<ListStatusPesanan> {
   String? nobukti;
   int? qty;
+  String? jobemkl;
 
   @override
   void initState() {
@@ -59,10 +60,11 @@ class _ListStatusPesananState extends State<ListStatusPesanan> {
     if (args != null) {
       nobukti = args['nobukti'];
       qty = args['qty'];
+      jobemkl = args['jobemkl'];
     }
     return BlocProvider(
-      create: (context) =>
-          ListpesananstatusBloc()..add(LoadListPesananStatus(nobukti, qty)),
+      create: (context) => ListpesananstatusBloc()
+        ..add(LoadListPesananStatus(nobukti, qty, jobemkl ?? "")),
       child: BlocBuilder<ListpesananstatusBloc, ListpesananstatusState>(
         builder: (context, state) {
           if (state is ListpesananstatusLoading) {

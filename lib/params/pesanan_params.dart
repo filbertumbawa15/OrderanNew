@@ -149,13 +149,15 @@ class ListOrderDetailParam {
 class ListOrderStatusParam {
   String? nobukti;
   int? qty;
+  String? jobemkl;
 
-  ListOrderStatusParam(this.nobukti, this.qty);
+  ListOrderStatusParam(this.nobukti, this.qty, this.jobemkl);
 
   Map<String, dynamic> toJson() {
     return {
       'nobukti': nobukti,
       'qty': qty,
+      'jobemkl': jobemkl,
     };
   }
 }

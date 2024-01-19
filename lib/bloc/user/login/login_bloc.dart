@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:tasorderan/core/api_client.dart';
 import 'package:tasorderan/core/session_manager.dart';
+import 'package:tasorderan/main.dart';
 import 'package:tasorderan/params/register_user_params.dart';
 import 'package:tasorderan/repo/auth_repository.dart';
 import 'package:tasorderan/response/user_response.dart';
@@ -18,10 +19,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   void _loginUser(LoginUserEvent event, Emitter<LoginState> emit) async {
     UserRegisterResponse response = UserRegisterResponse();
+    ApiClient apiClient = ApiClient();
     final params = LoginParam(
       event.email,
       event.password,
-      apiClient.fcmToken,
+      fcmToken,
     );
     emit(LoginLoading());
     try {

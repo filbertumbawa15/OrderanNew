@@ -1,6 +1,9 @@
 import 'package:hive/hive.dart';
+import 'package:tasorderan/core/api_client.dart';
+import 'package:tasorderan/main.dart';
 
 class SessionManager {
+  final apiClient = ApiClient();
   final Box box = Hive.box('session');
 
   void setSession(
@@ -69,6 +72,12 @@ class SessionManager {
     String? activeTglLahir = getActiveTglLahir();
     String? activeAlamat = getActiveAlamat();
     String? activeFcmToken = getActiveFcmToken();
+    // print(activeName);
+    // print(activeUser);
+    // print(activeTelp);
+    // print(activeEmail);
+    // print(activePasword);
+    // print(activeToken);
     return activeName != null &&
         activeUser != null &&
         activeTelp != null &&

@@ -16,7 +16,8 @@ class ListpesananstatusBloc
       (event, emit) async {
         try {
           emit(ListpesananstatusLoading());
-          final param = ListOrderStatusParam(event.nobukti, event.qty);
+          final param =
+              ListOrderStatusParam(event.nobukti, event.qty, event.jobemkl);
           final response = await pesananRepository.getPesananStatus(param);
           emit(ListpesananstatusSuccess(response));
         } catch (e) {

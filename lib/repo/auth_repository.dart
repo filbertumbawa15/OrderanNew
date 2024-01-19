@@ -71,7 +71,7 @@ class AuthRepository extends ApiClient {
       throw UserRegisterResponse.fromJson(e.response!.data);
     }
   }
-
+  
   Future<File> getKtpImage(String ktp) async {
     var rng = Random();
     Directory tempDir = await getApplicationDocumentsDirectory();

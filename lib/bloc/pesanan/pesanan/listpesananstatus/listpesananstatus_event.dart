@@ -11,6 +11,7 @@ sealed class ListpesananstatusEvent extends Equatable {
 class LoadListPesananStatus extends ListpesananstatusEvent {
   String? nobukti;
   int? qty;
+  String? jobemkl;
 
-  LoadListPesananStatus(this.nobukti, this.qty);
+  LoadListPesananStatus(this.nobukti, this.qty, this.jobemkl);
 }

@@ -1,65 +1,26 @@
 {
   "project_info": {
-    "project_number": "211359382597",
-    "project_id": "chatapp-a53e3",
-    "storage_bucket": "chatapp-a53e3.appspot.com"
+    "project_number": "725352137575",
+    "project_id": "chat-app-project-b6130",
+    "storage_bucket": "chat-app-project-b6130.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:211359382597:android:658b1fa97f15c716c6b72c",
-        "android_client_info": {
-          "package_name": "com.example.firebase_fcm"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "211359382597-faclcvo3i5lbb9lhkmatmig669ooc3nr.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCMWlglXoeJQkVSSHOG-yafRy3bIRZRDpc"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "211359382597-faclcvo3i5lbb9lhkmatmig669ooc3nr.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:211359382597:android:fc4aa5905b5cd35ac6b72c",
+        "mobilesdk_app_id": "1:725352137575:android:50e25ebe059210fc3fa5c2",
         "android_client_info": {
           "package_name": "com.transporindo.tasemklorderan"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "211359382597-faclcvo3i5lbb9lhkmatmig669ooc3nr.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCMWlglXoeJQkVSSHOG-yafRy3bIRZRDpc"
+          "current_key": "AIzaSyBUbvVC5NnXpAF0Oet2MJQKcCCEHxFkNd8"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "211359382597-faclcvo3i5lbb9lhkmatmig669ooc3nr.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
